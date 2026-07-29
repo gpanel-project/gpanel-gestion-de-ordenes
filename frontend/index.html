@@ -3,33 +3,100 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Iniciar Sesion - Gestion de Mantenimiento</title>
+  <title>Iniciar Sesión - Gestión de Mantenimiento</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap">
   <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/brand-panel.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
-  <div class="login-container">
-    <div class="login-card">
-      <h1>Gestion de Mantenimiento</h1>
-      <p class="subtitle">Inicia sesion para continuar</p>
-      <div id="alertBox" class="alert alert-error"></div>
-      <form id="loginForm">
-        <div class="form-group">
-          <label for="email">Correo electronico</label>
-          <input type="email" id="email" placeholder="tucorreo@gmail.com" required>
+
+  <div class="auth-shell">
+
+    <!-- ── Panel de marca ─────────────────────────────────── -->
+    <aside class="brand-panel">
+      <div class="brand-panel__glow"></div>
+
+        <div class="brand-panel__content">
+          <!-- <span class="brand-panel__eyebrow">
+            <span class="eyebrow-dot"></span>
+            Plataforma profesional
+        </span> -->
+
+        <h2 class="brand-panel__title">
+          Gestión de <em>mantenimiento</em><br>
+          sin fricción.
+        </h2>
+
+        <p class="brand-panel__text">
+          Asigna técnicos, registra diagnósticos, captura firmas digitales y genera reportes en PDF.
+          Todo en una sola plataforma, desde cualquier lugar.
+        </p>
+
+        <div class="brand-panel__cards">
+          <div class="card-item">
+            <div class="card-icon"><i class="fa-solid fa-microchip"></i></div>
+            <div class="card-body">
+              <span class="card-title">Diagnóstico Técnico</span>
+              <span class="card-desc">Identifica fallas en equipos electrónicos con herramientas especializadas.</span>
+            </div>
+          </div>
+          <div class="card-item">
+            <div class="card-icon"><i class="fa-solid fa-clipboard-list"></i></div>
+            <div class="card-body">
+              <span class="card-title">Orden de Servicio</span>
+              <span class="card-desc">Gestiona el ciclo completo de reparación y seguimiento.</span>
+            </div>
+          </div>
+          <div class="card-item">
+            <div class="card-icon"><i class="fa-solid fa-pen"></i></div>
+            <div class="card-body">
+              <span class="card-title">Firma Digital</span>
+              <span class="card-desc">Captura la conformidad del cliente al finalizar cada orden.</span>
+            </div>
+          </div>
+          <div class="card-item">
+            <div class="card-icon"><i class="fa-solid fa-file-pdf"></i></div>
+            <div class="card-body">
+              <span class="card-title">Reporte PDF</span>
+              <span class="card-desc">Genera documentación profesional de cada intervención.</span>
+            </div>
+          </div>
         </div>
-        <div class="form-group">
-          <label for="password">Contrasena</label>
-          <input type="password" id="password" placeholder="********" required>
-        </div>
-        <button type="submit" class="btn btn-primary" id="loginBtn">Iniciar sesion</button>
-      </form>
+      </div>
+    </aside>
+
+    <!-- ── Formulario de login (sin cambios) ──────────────── -->
+    <div class="login-container">
+      <div class="login-card">
+        <h1>🔧 Gestión de Mantenimiento</h1>
+        <p class="subtitle">Inicia sesión para continuar</p>
+
+        <div id="alertBox" class="alert alert-error"></div>
+
+        <form id="loginForm">
+          <div class="form-group">
+            <label for="email">Correo electrónico</label>
+            <input type="email" id="email" placeholder="tucorreo@gmail.com" required>
+          </div>
+
+          <div class="form-group">
+            <label for="password">Contraseña</label>
+            <input type="password" id="password" placeholder="••••••••" required>
+          </div>
+
+          <button type="submit" class="btn btn-primary" id="loginBtn">
+            Iniciar sesión
+          </button>
+        </form>
+      </div>
     </div>
+
   </div>
+
   <script src="js/api.js"></script>
   <script src="js/login.js"></script>
-  <script src="js/effects.js"></script>
 </body>
 </html>
