@@ -1,39 +1,35 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Iniciar Sesión - Gestión de Mantenimiento</title>
+  <title>Iniciar Sesion - Gestion de Mantenimiento</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-
   <div class="login-container">
     <div class="login-card">
-      <h1>🔧 Gestión de Mantenimiento</h1>
-      <p class="subtitle">Inicia sesión para continuar</p>
-
+      <h1>Gestion de Mantenimiento</h1>
+      <p class="subtitle">Inicia sesion para continuar</p>
       <div id="alertBox" class="alert alert-error"></div>
-
       <form id="loginForm">
         <div class="form-group">
-          <label for="email">Correo electrónico</label>
+          <label for="email">Correo electronico</label>
           <input type="email" id="email" placeholder="tucorreo@gmail.com" required>
         </div>
-
         <div class="form-group">
-          <label for="password">Contraseña</label>
-          <input type="password" id="password" placeholder="••••••••" required>
+          <label for="password">Contrasena</label>
+          <input type="password" id="password" placeholder="********" required>
         </div>
-
-        <button type="submit" class="btn btn-primary" id="loginBtn">
-          Iniciar sesión
-        </button>
+        <button type="submit" class="btn btn-primary" id="loginBtn">Iniciar sesion</button>
       </form>
     </div>
   </div>
-
   <script src="js/api.js"></script>
   <script src="js/login.js"></script>
+  <script src="js/effects.js"></script>
 </body>
 </html>

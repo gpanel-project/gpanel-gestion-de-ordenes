@@ -1,39 +1,86 @@
+/* =============================================================
+   1. Detail Cards
+   ============================================================= */
 .detail-card {
-  background: white;
-  border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-  padding: 20px;
-  margin-bottom: 20px;
+  background:var(--bg-card);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  padding:24px;
+  margin-bottom:20px;
+  transition:transform 0.3s var(--ease-out),box-shadow 0.3s var(--ease-out);
 }
-
+.detail-card:hover {
+  box-shadow:var(--shadow-hover);
+}
 .detail-card h3 {
-  color: #1a3c5e;
-  font-size: 16px;
-  margin-bottom: 15px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid #eee;
+  color:var(--navy);
+  font-size:15px;
+  font-weight:600;
+  margin-bottom:16px;
+  padding-bottom:12px;
+  border-bottom:1px solid var(--line);
+  letter-spacing:-0.2px;
 }
 
+/* =============================================================
+   2. Detail Grid
+   ============================================================= */
 .detail-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 15px;
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:16px;
 }
-
 .detail-label {
-  display: block;
-  font-size: 12px;
-  color: #888;
-  text-transform: uppercase;
-  margin-bottom: 4px;
+  display:block;
+  font-size:11px;
+  color:var(--ink-mute);
+  text-transform:uppercase;
+  letter-spacing:0.5px;
+  font-weight:600;
+  margin-bottom:4px;
 }
-
 .detail-grid > div > div {
-  font-size: 15px;
-  font-weight: 500;
+  font-size:15px;
+  font-weight:500;
+  color:var(--ink);
 }
 
+/* =============================================================
+   3. Description
+   ============================================================= */
 #description {
-  line-height: 1.6;
-  color: #333;
+  line-height:1.7;
+  color:var(--ink-soft);
+  font-size:14px;
+}
+
+/* =============================================================
+   4. Signature Section
+   ============================================================= */
+#signatureCanvas {
+  border:2px dashed var(--line) !important;
+  border-radius:var(--radius-sm);
+  background:#fafafa;
+  transition:border-color 0.3s;
+}
+#signatureCanvas:focus {
+  border-color:var(--accent) !important;
+}
+#signatureDisplay p {
+  color:var(--ink-soft);
+  font-size:14px;
+}
+#signatureDisplay img {
+  max-width:300px;
+  border:1px solid var(--line);
+  border-radius:var(--radius-sm);
+  margin-top:12px;
+}
+
+/* =============================================================
+   5. Responsive
+   ============================================================= */
+@media (max-width:768px) {
+  .detail-card { padding:18px; }
+  .detail-grid { grid-template-columns:1fr; }
 }
