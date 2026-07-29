@@ -1,0 +1,174 @@
+/* ─── Layout general ────────────────────────────────────── */
+.app-container {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ─── Sidebar ────────────────────────────────────────────── */
+.sidebar {
+  width: 240px;
+  background-color: #1a3c5e;
+  color: white;
+  padding: 20px 0;
+  flex-shrink: 0;
+}
+
+.sidebar-header {
+  padding: 0 20px 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  margin-bottom: 20px;
+}
+
+.sidebar-header h2 {
+  font-size: 18px;
+}
+
+.sidebar-header p {
+  font-size: 12px;
+  color: #cbd5e1;
+  margin-top: 5px;
+}
+
+.sidebar-nav a {
+  display: block;
+  padding: 12px 20px;
+  color: #cbd5e1;
+  text-decoration: none;
+  font-size: 14px;
+  transition: all 0.2s;
+  border-left: 3px solid transparent;
+}
+
+.sidebar-nav a:hover,
+.sidebar-nav a.active {
+  background-color: rgba(255,255,255,0.05);
+  color: white;
+  border-left-color: #f97316;
+}
+
+.sidebar-footer {
+  padding: 20px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  margin-top: 20px;
+}
+
+.sidebar-footer button {
+  width: 100%;
+  padding: 10px;
+  background-color: rgba(255,255,255,0.05);
+  color: white;
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.sidebar-footer button:hover {
+  background-color: rgba(255,255,255,0.1);
+}
+
+/* ─── Contenido principal ────────────────────────────────── */
+.main-content {
+  flex: 1;
+  padding: 30px;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.page-header h1 {
+  color: #1a3c5e;
+  font-size: 24px;
+}
+
+/* ─── Tarjetas de estadísticas ──────────────────────────── */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+.stat-card {
+  background: white;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  border-left: 4px solid #1a3c5e;
+}
+
+.stat-card.pendiente   { border-left-color: #f59e0b; }
+.stat-card.en_progreso { border-left-color: #3b82f6; }
+.stat-card.completada  { border-left-color: #22c55e; }
+.stat-card.cancelada   { border-left-color: #ef4444; }
+.stat-card.total       { border-left-color: #1a3c5e; }
+
+.stat-card .number {
+  font-size: 28px;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.stat-card .label {
+  font-size: 13px;
+  color: #888;
+  margin-top: 5px;
+}
+
+/* ─── Tablas ─────────────────────────────────────────────── */
+.table-container {
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  overflow: hidden;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+thead {
+  background-color: #1a3c5e;
+  color: white;
+}
+
+th, td {
+  padding: 12px 15px;
+  text-align: left;
+  font-size: 14px;
+}
+
+tbody tr {
+  border-bottom: 1px solid #eee;
+}
+
+tbody tr:hover {
+  background-color: #f9f9f9;
+}
+
+/* ─── Badges de estado ───────────────────────────────────── */
+.badge {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.badge-pendiente   { background-color: #fef3c7; color: #92400e; }
+.badge-en_progreso { background-color: #dbeafe; color: #1e40af; }
+.badge-completada  { background-color: #dcfce7; color: #166534; }
+.badge-cancelada   { background-color: #fee2e2; color: #991b1b; }
+
+/* ─── Botones pequeños ───────────────────────────────────── */
+.btn-sm {
+  width: auto;
+  padding: 6px 14px;
+  font-size: 13px;
+  border-radius: 6px;
+}

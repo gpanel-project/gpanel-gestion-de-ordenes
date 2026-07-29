@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Detalle de Orden - Gestión de Mantenimiento</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/order-detail.css">
+  <!-- Librería para dibujar la firma -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/signature_pad/4.1.5/signature_pad.umd.min.js"></script>
+</head>
+<body>
+
+  <div class="app-container" id="appContainer">
+    <div class="main-content">
+
+      <div class="page-header">
+        <h1 id="orderTitle">Orden de Servicio</h1>
+        <a href="orders-list.html" class="btn btn-primary btn-sm">← Volver</a>
+      </div>
+
+      <div id="alertBox" class="alert alert-success"></div>
+
+      <!-- ─── Información general ─────────────────────────── -->
+      <div class="detail-card">
+        <h3>Información General</h3>
+        <div class="detail-grid">
+          <div><span class="detail-label">Cliente</span><div id="clientName">-</div></div>
+          <div><span class="detail-label">Empresa</span><div id="clientCompany">-</div></div>
+          <div><span class="detail-label">Técnico</span><div id="technicianName">-</div></div>
+          <div><span class="detail-label">Estado</span><div id="orderStatus">-</div></div>
+          <div><span class="detail-label">Fecha de creación</span><div id="createdAt">-</div></div>
+          <div><span class="detail-label">Costo total</span><div id="totalCost">-</div></div>
+        </div>
+      </div>
+
+      <!-- ─── Descripción ──────────────────────────────────── -->
+      <div class="detail-card">
+        <h3>Descripción del problema</h3>
+        <p id="description">-</p>
+      </div>
+
+      <!-- ─── Edición (admin/tecnico) ──────────────────────── -->
+      <div class="detail-card" id="editSection">
+        <h3>Detalles del trabajo</h3>
+        <form id="editForm">
+          <div class="form-group">
+            <label>Diagnóstico</label>
+            <textarea id="diagnosis" rows="3"></textarea>
+          </div>
+          <div class="form-group">
+            <label>Trabajo realizado</label>
+            <textarea id="work_done" rows="3"></textarea>
+          </div>
+          <div class="form-group">
+            <label>Repuestos utilizados</label>
+            <textarea id="parts_used" rows="2"></textarea>
+          </div>
+          <div class="form-group">
+            <label>Costo total</label>
+            <input type="number" id="total_cost" step="1000" min="0">
+          </div>
+          <div class="form-group">
+            <label>Estado</label>
+            <select id="statusSelect">
+              <option value="pendiente">Pendiente</option>
+              <option value="en_progreso">En progreso</option>
+              <option value="completada">Completada</option>
+              <option value="cancelada">Cancelada</option>
+            </select>
+          </div>
+          <button type="submit" class="btn btn-primary" style="width: auto; padding: 10px 25px;">
+            Guardar cambios
+          </button>
+        </form>
+      </div>
+
+      <!-- ─── Firma del cliente ────────────────────────────── -->
+      <div class="detail-card" id="signatureSection">
+        <h3>Firma del cliente</h3>
+
+        <div id="signatureDisplay" style="display:none;">
+          <p>✅ Orden firmada el <span id="signatureDate"></span></p>
+          <img id="signatureImg" style="max-width: 300px; border: 1px solid #ddd; border-radius: 8px; margin-top: 10px;">
+        </div>
+
+        <div id="signaturePadContainer">
+          <p style="margin-bottom: 10px; color: #666; font-size: 14px;">
+            El cliente debe firmar aquí para confirmar que el servicio fue completado satisfactoriamente.
+          </p>
+          <canvas id="signatureCanvas" style="border: 2px dashed #ddd; border-radius: 8px; width: 100%; height: 200px; touch-action: none;"></canvas>
+          <div style="display:flex; gap: 10px; margin-top: 15px;">
+            <button id="clearSignature" class="btn btn-primary btn-sm" style="background-color:#888;">Limpiar</button>
+            <button id="saveSignature" class="btn btn-secondary btn-sm">Guardar firma y enviar correo</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── Descargar PDF ─────────────────────────────────── -->
+      <div class="detail-card" id="pdfSection" style="display:none;">
+        <h3>Documento PDF</h3>
+        <button id="downloadPdfBtn" class="btn btn-primary" style="width:auto; padding: 10px 25px;">
+          Descargar PDF
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/sidebar.js"></script>
+  <script src="js/order-detail.js"></script>
+</body>
+</html>

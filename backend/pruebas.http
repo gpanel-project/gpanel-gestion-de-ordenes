@@ -1,0 +1,109 @@
+### 1. Intentar sin token (debe dar 401)
+GET http://localhost:3000/api/users
+Content-Type: application/json
+
+###
+
+### 2. Login para obtener token
+POST http://localhost:3000/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "marcos@gmail.com",
+  "password": "123456"
+}
+
+###
+
+### 3. Listar usuarios CON token (reemplaza TU_TOKEN con el del login)
+GET http://localhost:3000/api/users
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJtYXJjb3NAZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzc5MzI5NTkwLCJleHAiOjE3NzkzNTgzOTB9.srfOdXkeAj2Cv90Zzc1_Kucm0ssX2jJFA9hVqn_G1-Y
+
+###
+
+### 4. Crear nuevo usuario CON token
+POST http://localhost:3000/api/users
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJtYXJjb3NAZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzc5MzI5NTkwLCJleHAiOjE3NzkzNTgzOTB9.srfOdXkeAj2Cv90Zzc1_Kucm0ssX2jJFA9hVqn_G1-Y
+
+{
+  "name": "Carlos Tecnico",
+  "email": "carlos@gmail.com",
+  "password": "123456",
+  "role": "tecnico"
+}
+
+### 1. Crear orden (reemplaza TU_TOKEN)
+POST http://localhost:3000/api/orders
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJtYXJjb3NAZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzc5MzMwMjkzLCJleHAiOjE3NzkzNTkwOTN9.6rvGAgX-83gbOrrunrGpodZKECsJcbbeHYWqdkDDD2I
+
+{
+  "client_id": 1,
+  "technician_id": 1,
+  "description": "La impresora no enciende"
+}
+
+###
+
+### 2. Listar órdenes
+GET http://localhost:3000/api/orders
+Content-Type: application/json
+Authorization: Bearer TU_TOKEN
+
+###
+
+### 3. Ver detalle de la orden 1
+GET http://localhost:3000/api/orders/1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJtYXJjb3NAZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzc5MzMwMjkzLCJleHAiOjE3NzkzNTkwOTN9.6rvGAgX-83gbOrrunrGpodZKECsJcbbeHYWqdkDDD2I
+
+###
+
+### 4. Actualizar orden
+PUT http://localhost:3000/api/orders/1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJtYXJjb3NAZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzc5MzMwMjkzLCJleHAiOjE3NzkzNTkwOTN9.6rvGAgX-83gbOrrunrGpodZKECsJcbbeHYWqdkDDD2I
+
+{
+  "diagnosis": "Fuente de poder dañada",
+  "work_done": "Se reemplazó la fuente de poder",
+  "parts_used": "Fuente de poder HP 32W",
+  "total_cost": 150000
+}
+
+###
+
+### 5. Cambiar estado
+PATCH http://localhost:3000/api/orders/1/status
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJtYXJjb3NAZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzc5MzMwMjkzLCJleHAiOjE3NzkzNTkwOTN9.6rvGAgX-83gbOrrunrGpodZKECsJcbbeHYWqdkDDD2I
+
+{
+  "status": "en_progreso"
+}
+
+### Guardar firma y generar PDF
+POST http://localhost:3000/api/orders/1/signature
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJtYXJjb3NAZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzc5MzMwMjkzLCJleHAiOjE3NzkzNTkwOTN9.6rvGAgX-83gbOrrunrGpodZKECsJcbbeHYWqdkDDD2I
+
+{
+  "signature_base64": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
+}
+
+###
+
+### Descargar PDF
+GET http://localhost:3000/api/orders/1/pdf
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJtYXJjb3NAZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzc5MzMwMjkzLCJleHAiOjE3NzkzNTkwOTN9.6rvGAgX-83gbOrrunrGpodZKECsJcbbeHYWqdkDDD2I
+
+### Guardar firma (genera PDF y envía correo)
+POST http://localhost:3000/api/orders/1/signature
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJtYXJjb3NAZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzc5MzMwMjkzLCJleHAiOjE3NzkzNTkwOTN9.6rvGAgX-83gbOrrunrGpodZKECsJcbbeHYWqdkDDD2I
+
+{
+  "signature_base64": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
+}
