@@ -34,4 +34,5 @@ const db = {
   }
 };
 
+db.pool = pool;
 module.exports = db;

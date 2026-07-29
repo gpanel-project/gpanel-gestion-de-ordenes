@@ -1,174 +1,216 @@
-/* ─── Layout general ────────────────────────────────────── */
-.app-container {
-  display: flex;
-  min-height: 100vh;
-}
+/* =============================================================
+   1. App Container
+   ============================================================= */
+.app-container { display:flex; min-height:100vh; }
 
-/* ─── Sidebar ────────────────────────────────────────────── */
+/* =============================================================
+   2. Sidebar
+   ============================================================= */
 .sidebar {
-  width: 240px;
-  background-color: #1a3c5e;
-  color: white;
-  padding: 20px 0;
-  flex-shrink: 0;
+  width:250px;
+  background:linear-gradient(180deg,var(--navy-dark) 0%,var(--navy) 100%);
+  color:#fff;
+  flex-shrink:0;
+  display:flex;
+  flex-direction:column;
+  position:sticky;
+  top:0;
+  height:100vh;
 }
-
 .sidebar-header {
-  padding: 0 20px 20px;
-  border-bottom: 1px solid rgba(255,255,255,0.1);
-  margin-bottom: 20px;
+  padding:24px 24px 20px;
+  border-bottom:1px solid rgba(255,255,255,0.06);
 }
-
 .sidebar-header h2 {
-  font-size: 18px;
+  font-size:17px;
+  font-weight:700;
+  letter-spacing:-0.3px;
 }
-
 .sidebar-header p {
-  font-size: 12px;
-  color: #cbd5e1;
-  margin-top: 5px;
+  font-size:12px;
+  color:rgba(255,255,255,0.5);
+  margin-top:4px;
 }
-
+.sidebar-nav {
+  flex:1;
+  padding:12px 0;
+}
 .sidebar-nav a {
-  display: block;
-  padding: 12px 20px;
-  color: #cbd5e1;
-  text-decoration: none;
-  font-size: 14px;
-  transition: all 0.2s;
-  border-left: 3px solid transparent;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:11px 24px;
+  color:rgba(255,255,255,0.65);
+  text-decoration:none;
+  font-size:14px;
+  font-weight:500;
+  transition:all 0.25s var(--ease-out);
+  border-left:3px solid transparent;
+  position:relative;
 }
-
-.sidebar-nav a:hover,
+.sidebar-nav a:hover {
+  background:rgba(255,255,255,0.06);
+  color:#fff;
+  border-left-color:var(--accent);
+}
 .sidebar-nav a.active {
-  background-color: rgba(255,255,255,0.05);
-  color: white;
-  border-left-color: #f97316;
+  background:rgba(255,255,255,0.08);
+  color:#fff;
+  border-left-color:var(--accent);
+  font-weight:600;
 }
-
 .sidebar-footer {
-  padding: 20px;
-  border-top: 1px solid rgba(255,255,255,0.1);
-  margin-top: 20px;
+  padding:16px 20px;
+  border-top:1px solid rgba(255,255,255,0.06);
 }
-
 .sidebar-footer button {
-  width: 100%;
-  padding: 10px;
-  background-color: rgba(255,255,255,0.05);
-  color: white;
-  border: 1px solid rgba(255,255,255,0.2);
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 13px;
+  width:100%;
+  padding:10px;
+  background:rgba(255,255,255,0.06);
+  color:rgba(255,255,255,0.7);
+  border:1px solid rgba(255,255,255,0.1);
+  border-radius:8px;
+  cursor:pointer;
+  font-size:13px;
+  font-weight:500;
+  transition:all 0.25s var(--ease-out);
 }
-
 .sidebar-footer button:hover {
-  background-color: rgba(255,255,255,0.1);
+  background:rgba(255,255,255,0.1);
+  color:#fff;
 }
 
-/* ─── Contenido principal ────────────────────────────────── */
+/* =============================================================
+   3. Main Content
+   ============================================================= */
 .main-content {
-  flex: 1;
-  padding: 30px;
+  flex:1;
+  padding:32px;
+  max-width:1200px;
 }
 
+/* =============================================================
+   4. Page Header
+   ============================================================= */
 .page-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 25px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:28px;
 }
-
 .page-header h1 {
-  color: #1a3c5e;
-  font-size: 24px;
+  color:var(--navy);
+  font-size:26px;
+  font-weight:700;
 }
 
-/* ─── Tarjetas de estadísticas ──────────────────────────── */
+/* =============================================================
+   5. Stats Grid
+   ============================================================= */
 .stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 15px;
-  margin-bottom: 30px;
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+  gap:16px;
+  margin-bottom:32px;
 }
-
 .stat-card {
-  background: white;
-  border-radius: 10px;
-  padding: 20px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-  border-left: 4px solid #1a3c5e;
+  background:var(--bg-card);
+  border-radius:var(--radius);
+  padding:22px;
+  box-shadow:var(--shadow);
+  border-left:4px solid var(--navy);
+  transition:transform 0.3s var(--ease-out),box-shadow 0.3s var(--ease-out);
+  position:relative;
+  overflow:hidden;
 }
-
-.stat-card.pendiente   { border-left-color: #f59e0b; }
-.stat-card.en_progreso { border-left-color: #3b82f6; }
-.stat-card.completada  { border-left-color: #22c55e; }
-.stat-card.cancelada   { border-left-color: #ef4444; }
-.stat-card.total       { border-left-color: #1a3c5e; }
-
+.stat-card::after {
+  content:"";
+  position:absolute;
+  top:0; right:0;
+  width:80px; height:80px;
+  border-radius:50%;
+  background:var(--navy);
+  opacity:0.03;
+  transform:translate(20px,-20px);
+}
+.stat-card:hover {
+  transform:translateY(-3px);
+  box-shadow:var(--shadow-hover);
+}
+.stat-card.pendiente { border-left-color:#f59e0b; }
+.stat-card.en_progreso { border-left-color:#3b82f6; }
+.stat-card.completada { border-left-color:#22c55e; }
+.stat-card.cancelada { border-left-color:#ef4444; }
+.stat-card.total { border-left-color:var(--navy); }
 .stat-card .number {
-  font-size: 28px;
-  font-weight: 700;
-  color: #1a1a1a;
+  font-size:28px;
+  font-weight:700;
+  color:var(--ink);
 }
-
 .stat-card .label {
-  font-size: 13px;
-  color: #888;
-  margin-top: 5px;
+  font-size:13px;
+  color:var(--ink-mute);
+  margin-top:4px;
+  font-weight:500;
 }
 
-/* ─── Tablas ─────────────────────────────────────────────── */
+/* =============================================================
+   6. Tables
+   ============================================================= */
 .table-container {
-  background: white;
-  border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-  overflow: hidden;
+  background:var(--bg-card);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  overflow:hidden;
+  transition:box-shadow 0.3s var(--ease-out);
 }
-
+.table-container:hover {
+  box-shadow:var(--shadow-hover);
+}
 table {
-  width: 100%;
-  border-collapse: collapse;
+  width:100%;
+  border-collapse:collapse;
 }
-
 thead {
-  background-color: #1a3c5e;
-  color: white;
+  background:linear-gradient(135deg,var(--navy),var(--navy-light));
+  color:#fff;
 }
-
-th, td {
-  padding: 12px 15px;
-  text-align: left;
-  font-size: 14px;
+th {
+  padding:14px 16px;
+  text-align:left;
+  font-size:12px;
+  font-weight:600;
+  text-transform:uppercase;
+  letter-spacing:0.5px;
 }
-
+td {
+  padding:13px 16px;
+  font-size:14px;
+  border-bottom:1px solid var(--line);
+}
 tbody tr {
-  border-bottom: 1px solid #eee;
+  transition:background 0.2s;
 }
-
+tbody tr:last-child td {
+  border-bottom:none;
+}
 tbody tr:hover {
-  background-color: #f9f9f9;
+  background:rgba(249,115,22,0.04);
 }
 
-/* ─── Badges de estado ───────────────────────────────────── */
-.badge {
-  padding: 4px 10px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 600;
-  text-transform: uppercase;
+/* =============================================================
+   7. Responsive
+   ============================================================= */
+@media (max-width:768px) {
+  .app-container { flex-direction:column; }
+  .sidebar { width:100%; height:auto; position:relative; }
+  .sidebar-nav { display:flex; flex-wrap:wrap; padding:8px; }
+  .sidebar-nav a { flex:1; min-width:120px; justify-content:center; border-left:none; border-bottom:2px solid transparent; padding:10px; }
+  .sidebar-nav a:hover, .sidebar-nav a.active { border-left:none; border-bottom-color:var(--accent); }
+  .main-content { padding:20px; }
+  .stats-grid { grid-template-columns:repeat(2,1fr); }
 }
-
-.badge-pendiente   { background-color: #fef3c7; color: #92400e; }
-.badge-en_progreso { background-color: #dbeafe; color: #1e40af; }
-.badge-completada  { background-color: #dcfce7; color: #166534; }
-.badge-cancelada   { background-color: #fee2e2; color: #991b1b; }
-
-/* ─── Botones pequeños ───────────────────────────────────── */
-.btn-sm {
-  width: auto;
-  padding: 6px 14px;
-  font-size: 13px;
-  border-radius: 6px;
+@media (max-width:480px) {
+  .stats-grid { grid-template-columns:1fr; }
+  .page-header { flex-direction:column; gap:12px; }
 }

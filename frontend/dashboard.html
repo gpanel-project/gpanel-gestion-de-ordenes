@@ -1,47 +1,43 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard - Gestión de Mantenimiento</title>
+  <title>Dashboard - Gestion de Mantenimiento</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap">
   <link rel="stylesheet" href="css/styles.css">
   <link rel="stylesheet" href="css/layout.css">
 </head>
 <body>
-
   <div class="app-container" id="appContainer">
-    <!-- El sidebar se inserta con JS -->
     <div class="main-content">
       <div class="page-header">
         <h1>Dashboard</h1>
       </div>
-
-      <div class="stats-grid" id="statsGrid">
-        <!-- Las tarjetas se insertan con JS -->
+      <div class="stats-grid" id="statsGrid" data-reveal>
       </div>
-
-      <div class="table-container">
+      <div class="table-container" data-reveal>
         <table>
           <thead>
             <tr>
               <th>Orden</th>
               <th>Cliente</th>
-              <th>Técnico</th>
+              <th>Tecnico</th>
               <th>Estado</th>
-              <th>Acción</th>
+              <th>Accion</th>
             </tr>
           </thead>
-          <tbody id="recentOrders">
-            <!-- Últimas órdenes se insertan con JS -->
-          </tbody>
+          <tbody id="recentOrders"></tbody>
         </table>
       </div>
     </div>
   </div>
-
   <script src="js/api.js"></script>
   <script src="js/auth.js"></script>
   <script src="js/sidebar.js"></script>
   <script src="js/dashboard.js"></script>
+  <script src="js/effects.js"></script>
 </body>
 </html>

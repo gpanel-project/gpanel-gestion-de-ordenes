@@ -3,19 +3,20 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Órdenes - Gestión de Mantenimiento</title>
+  <title>Ordenes - Gestion de Mantenimiento</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap">
   <link rel="stylesheet" href="css/styles.css">
   <link rel="stylesheet" href="css/layout.css">
 </head>
 <body>
-
   <div class="app-container" id="appContainer">
     <div class="main-content">
       <div class="page-header">
-        <h1>Órdenes de Servicio</h1>
+        <h1>Ordenes de Servicio</h1>
       </div>
-
-      <div class="form-group" style="max-width: 300px;">
+      <div class="form-group" style="max-width:300px">
         <label for="filterStatus">Filtrar por estado</label>
         <select id="filterStatus">
           <option value="">Todos</option>
@@ -25,32 +26,29 @@
           <option value="cancelada">Cancelada</option>
         </select>
       </div>
-
-      <div class="table-container">
+      <div class="table-container" data-reveal>
         <table>
           <thead>
             <tr>
               <th>Orden</th>
               <th>Cliente</th>
-              <th>Técnico</th>
-              <th>Descripción</th>
+              <th>Tecnico</th>
+              <th>Descripcion</th>
               <th>Estado</th>
               <th>Costo</th>
               <th>Fecha</th>
-              <th>Acción</th>
+              <th>Accion</th>
             </tr>
           </thead>
-          <tbody id="ordersTable">
-            <!-- Las órdenes se insertan con JS -->
-          </tbody>
+          <tbody id="ordersTable"></tbody>
         </table>
       </div>
     </div>
   </div>
-
   <script src="js/api.js"></script>
   <script src="js/auth.js"></script>
   <script src="js/sidebar.js"></script>
   <script src="js/orders-list.js"></script>
+  <script src="js/effects.js"></script>
 </body>
 </html>
