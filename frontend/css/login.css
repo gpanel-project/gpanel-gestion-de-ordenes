@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════
-   Panel de marca — pantalla de login
+   Panel de marca + formularios de login / registro
    Paleta: navy #1a3c5e, naranja #f97316, fondo #f4f6f9.
    ═══════════════════════════════════════════════════════════ */
 
@@ -167,6 +167,26 @@
 @keyframes pulse-dot {
   0%, 100% { opacity: 1; }
   50%      { opacity: 0.35; }
+}
+
+/* ── Auth footer (links entre login / registro) ──────────── */
+.auth-footer {
+  text-align: center;
+  margin-top: 22px;
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+
+.auth-footer a {
+  color: var(--accent);
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.auth-footer a:hover {
+  color: var(--accent-soft);
+  text-decoration: underline;
 }
 
 /* ── Responsive: ocultar panel en pantallas angostas ─────── */

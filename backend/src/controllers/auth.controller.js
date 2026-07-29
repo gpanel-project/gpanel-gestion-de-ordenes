@@ -40,6 +40,64 @@ const register = async (req, res) => {
   }
 };
 
+// ─── REGISTRO DE CLIENTE (users + clients en transacción) ──
+const registerClient = async (req, res) => {
+  const { name, email, password, company, phone, address } = req.body;
+
+  if (!name || !email || !password) {
+    return res.status(400).json({ error: 'Nombre, email y contraseña son obligatorios' });
+  }
+
+  try {
+    const [existing] = await db.query('SELECT id FROM users WHERE email = ?', [email]);
+    if (existing.length > 0) {
+      return res.status(400).json({ error: 'El email ya está registrado' });
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const password_hash = await bcrypt.hash(password, salt);
+
+    const client = await db.pool.connect();
+    try {
+      await client.query('BEGIN');
+
+      const userResult = await client.query(
+        'INSERT INTO users (name, email, password_hash, role) VALUES ($1, $2, $3, $4) RETURNING id',
+        [name, email, password_hash, 'cliente']
+      );
+      const userId = userResult.rows[0].id;
+
+      await client.query(
+        'INSERT INTO clients (name, company, email, phone, address, user_id) VALUES ($1, $2, $3, $4, $5, $6)',
+        [name, company || null, email, phone || null, address || null, userId]
+      );
+
+      await client.query('COMMIT');
+      client.release();
+
+      const token = jwt.sign(
+        { id: userId, email, role: 'cliente' },
+        process.env.JWT_SECRET,
+        { expiresIn: '8h' }
+      );
+
+      res.status(201).json({
+        mensaje: 'Cliente registrado exitosamente',
+        token,
+        user: { id: userId, name, email, role: 'cliente' }
+      });
+
+    } catch (err) {
+      await client.query('ROLLBACK');
+      client.release();
+      throw err;
+    }
+
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 // ─── LOGIN ──────────────────────────────────────────────
 const login = async (req, res) => {
   const { email, password } = req.body;
@@ -87,4 +145,4 @@ const login = async (req, res) => {
   }
 };
 
-module.exports = { register, login };
+module.exports = { register, login, registerClient };
