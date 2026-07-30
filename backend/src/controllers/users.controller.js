@@ -97,4 +97,28 @@ const deleteUser = async (req, res) => {
   }
 };
 
-module.exports = { getUsers, getUserById, createUser, updateUser, deleteUser };
+// ─── ESTADÍSTICAS DE USUARIOS ─────────────────────────────
+const getUserStats = async (req, res) => {
+  try {
+    const [stats] = await db.query(`
+      SELECT
+        COUNT(*)                                     as total,
+        SUM(CASE WHEN role = 'admin'   THEN 1 ELSE 0 END) as admins,
+        SUM(CASE WHEN role = 'tecnico' THEN 1 ELSE 0 END) as tecnicos,
+        SUM(CASE WHEN role = 'cliente' THEN 1 ELSE 0 END) as clientes,
+        SUM(CASE WHEN active = true    THEN 1 ELSE 0 END) as activos,
+        SUM(CASE WHEN active = false   THEN 1 ELSE 0 END) as inactivos
+      FROM users
+    `);
+
+    const [pending] = await db.query(
+      'SELECT COUNT(*) as pendientes FROM pending_registrations'
+    );
+
+    res.json({ ...stats[0], pendientes: pending[0]?.pendientes || 0 });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+module.exports = { getUsers, getUserById, createUser, updateUser, deleteUser, getUserStats };

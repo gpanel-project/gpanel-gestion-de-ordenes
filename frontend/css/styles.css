@@ -5,7 +5,8 @@
   --navy:        #1a3c5e;
   --navy-light:  #2a5298;
   --navy-dark:   #0f2438;
-  --accent:      #f9741663;
+  --accent:      #f97316;
+  --accent-select: #f9741671;
   --accent-soft: #ff8c42;
   --accent-glow: rgba(249,115,22,0.2);
   --bg:          #f0f4f8;
@@ -42,7 +43,7 @@ button { font:inherit; color:inherit; cursor:pointer; border:0; background:none;
 a { color:inherit; text-decoration:none; }
 p { text-wrap:pretty; }
 h1,h2,h3,h4 { text-wrap:balance; line-height:1.2; letter-spacing:-0.02em; font-family:var(--font-heading); }
-::selection { background:var(--accent); color:#fff; }
+::selection { background:var(--accent-select); color:#fff; }
 :focus-visible { outline:2px solid var(--accent); outline-offset:3px; border-radius:4px; }
 
 /* =============================================================
