@@ -2,7 +2,6 @@
    1. Detail Cards
    ============================================================= */
 .detail-card {
-  background:var(--bg-card);
   border-radius:var(--radius);
   box-shadow:var(--shadow);
   padding:24px;
