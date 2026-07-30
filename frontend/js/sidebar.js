@@ -9,11 +9,14 @@ function renderSidebar(activePage) {
     <a href="orders-list.html" class="${activePage === 'orders' ? 'active' : ''}">📋 Órdenes</a>
   `;
 
-  // Links solo para admin
+  // Links según rol
   if (user.role === 'admin') {
+    links += `     
+      <a href="users.html" class="${activePage === 'users' ? 'active' : ''}">👥 Usuarios</a>
+    `;
+  } else if (user.role === 'cliente') {
     links += `
       <a href="order-new.html" class="${activePage === 'order-new' ? 'active' : ''}">➕ Nueva Orden</a>
-      <a href="users.html" class="${activePage === 'users' ? 'active' : ''}">👥 Usuarios</a>
     `;
   }
 
