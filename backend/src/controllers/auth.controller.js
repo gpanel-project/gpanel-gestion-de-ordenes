@@ -25,14 +25,14 @@ const register = async (req, res) => {
     const password_hash = await bcrypt.hash(password, salt);
 
     // 5. Guardamos el usuario en la BD
-    const [result] = await db.query(
-      'INSERT INTO users (name, email, password_hash, role) VALUES (?, ?, ?, ?)',
+    const [rows] = await db.query(
+      'INSERT INTO users (name, email, password_hash, role) VALUES (?, ?, ?, ?) RETURNING id',
       [name, email, password_hash, role || 'tecnico']
     );
 
     res.status(201).json({ 
       mensaje: 'Usuario creado exitosamente',
-      id: result.insertId 
+      id: rows[0]?.id || null 
     });
 
   } catch (error) {

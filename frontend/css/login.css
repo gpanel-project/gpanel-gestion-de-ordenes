@@ -58,6 +58,29 @@
   pointer-events: none;
 }
 
+/* ── Imagen ilustrativa incrustada ───────────────────────── */
+.brand-panel__image {
+  position: absolute;
+  right: -35px;
+  width: 520px;
+  max-width: 65%;
+  height: auto;
+  object-fit: contain;
+  opacity: 0.35;
+  mix-blend-mode: lighten;
+  pointer-events: none;
+  z-index: 0;
+  filter: drop-shadow(0 15px 35px rgba(0, 0, 0, 0.45));
+  mask-image: radial-gradient(circle at 55% 55%, rgba(0, 0, 0, 1) 35%, rgba(0, 0, 0, 0) 90%);
+  -webkit-mask-image: radial-gradient(circle at 55% 55%, rgba(0, 0, 0, 1) 35%, rgba(0, 0, 0, 0) 90%);
+  animation: float-subtle 9s ease-in-out infinite;
+}
+
+@keyframes float-subtle {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-10px); }
+}
+
 /* ── Contenido textual ────────────────────────────────────── */
 .brand-panel__content {
   position: relative;
@@ -202,7 +225,8 @@
 
 /* ── Respeto a prefers-reduced-motion ─────────────────────── */
 @media (prefers-reduced-motion: reduce) {
-  .eyebrow-dot {
+  .eyebrow-dot,
+  .brand-panel__image {
     animation: none;
   }
 }

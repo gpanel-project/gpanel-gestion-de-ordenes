@@ -13,22 +13,23 @@
       // Generamos el número de orden automáticamente
       const year = new Date().getFullYear();
       const [lastOrder] = await db.query(
-        'SELECT COUNT(*) as total FROM service_orders WHERE YEAR(created_at) = ?',
+        'SELECT COUNT(*) as total FROM service_orders WHERE EXTRACT(YEAR FROM created_at) = ?',
         [year]
       );
-      const consecutive = String(lastOrder[0].total + 1).padStart(4, '0');
+      const totalCount = parseInt(lastOrder[0]?.total || 0, 10);
+      const consecutive = String(totalCount + 1).padStart(4, '0');
       const order_number = `OS-${year}-${consecutive}`;
 
-      const [result] = await db.query(
+      const [rows] = await db.query(
         `INSERT INTO service_orders 
           (order_number, client_id, technician_id, created_by, description, status) 
-        VALUES (?, ?, ?, ?, ?, 'pendiente')`,
+        VALUES (?, ?, ?, ?, ?, 'pendiente') RETURNING id`,
         [order_number, client_id, technician_id, req.user.id, description]
       );
 
       res.status(201).json({
         mensaje: 'Orden creada exitosamente',
-        id: result.insertId,
+        id: rows[0]?.id || null,
         order_number
       });
     } catch (error) {

@@ -47,12 +47,12 @@ const createUser = async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const password_hash = await bcrypt.hash(password, salt);
 
-    const [result] = await db.query(
-      'INSERT INTO users (name, email, password_hash, role) VALUES (?, ?, ?, ?)',
+    const [rows] = await db.query(
+      'INSERT INTO users (name, email, password_hash, role) VALUES (?, ?, ?, ?) RETURNING id',
       [name, email, password_hash, role || 'tecnico']
     );
 
-    res.status(201).json({ mensaje: 'Usuario creado exitosamente', id: result.insertId });
+    res.status(201).json({ mensaje: 'Usuario creado exitosamente', id: rows[0]?.id || null });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
