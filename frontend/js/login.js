@@ -4,18 +4,38 @@ if (localStorage.getItem('token')) {
 }
 
 const loginForm = document.getElementById('loginForm');
-const alertBox = document.getElementById('alertBox');
 const loginBtn = document.getElementById('loginBtn');
+const alertBox = document.getElementById('alertBox');
 
-function showAlert(message) {
-  alertBox.textContent = message;
+function showAlert(message, type = 'error') {
+  alertBox.className = `alert alert-${type}`;
+  if (message.includes('<')) {
+    alertBox.innerHTML = message;
+  } else {
+    alertBox.textContent = message;
+  }
   alertBox.style.display = 'block';
 }
 
+// ── Detectar si viene redirigido desde el registro (verify=sent) ──
+const urlParams = new URLSearchParams(window.location.search);
+if (urlParams.get('verify') === 'sent') {
+  const emailParam = urlParams.get('email') || '';
+  showAlert(
+    `✉️ Hemos enviado un código de verificación al correo <strong>${emailParam}</strong>.<br><br>
+     <a href="auth.html?email=${encodeURIComponent(emailParam)}" class="btn btn-secondary"
+        style="display:inline-block; padding:6px 14px; text-decoration:none; font-size:.85rem;">
+       Ingresar código de autenticación &rarr;
+     </a>`,
+    'info'
+  );
+}
+
+// ── Manejo del formulario de Login ──────────────────────────────
 loginForm.addEventListener('submit', async (e) => {
   e.preventDefault();
 
-  const email = document.getElementById('email').value;
+  const email = document.getElementById('email').value.trim();
   const password = document.getElementById('password').value;
 
   alertBox.style.display = 'none';
@@ -23,14 +43,11 @@ loginForm.addEventListener('submit', async (e) => {
   loginBtn.disabled = true;
 
   try {
-    // Llamamos a /api/auth/login (no requiere token, por eso "false")
     const data = await apiRequest('/auth/login', 'POST', { email, password }, false);
 
-    // Guardamos el token y los datos del usuario
     localStorage.setItem('token', data.token);
     localStorage.setItem('user', JSON.stringify(data.user));
 
-    // Redirigimos al dashboard
     window.location.href = 'dashboard.html';
 
   } catch (error) {

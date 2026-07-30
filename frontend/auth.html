@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Verificación de Cuenta - GPanel</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/login.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+  <div class="auth-shell">
+
+    <!-- ── Panel de marca ─────────────────────────────────── -->
+    <aside class="brand-panel">
+      <div class="brand-panel__glow"></div>
+      <img src="assets/img-index.png" alt="Ilustración Mantenimiento GPanel" class="brand-panel__image">
+
+      <div class="brand-panel__content">
+        <h2 class="brand-panel__title">
+          Verifica tu <em>cuenta</em><br>
+          para comenzar.
+        </h2>
+
+        <p class="brand-panel__text">
+          Ingresa el código de 6 dígitos que enviamos a tu correo 
+          para activar tu cuenta en GPanel.
+        </p>
+
+        <div class="brand-panel__cards">
+          <div class="card-item">
+            <div class="card-icon"><i class="fa-solid fa-shield-halved"></i></div>
+            <div class="card-body">
+              <span class="card-title">Acceso Seguro</span>
+              <span class="card-desc">Verificamos tu identidad antes de crear tu cuenta.</span>
+            </div>
+          </div>
+          <div class="card-item">
+            <div class="card-icon"><i class="fa-solid fa-envelope-circle-check"></i></div>
+            <div class="card-body">
+              <span class="card-title">Un solo paso</span>
+              <span class="card-desc">Ingresa el código y accede al sistema de inmediato.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ── Formulario de verificación ──────────────────────── -->
+    <div class="login-container">
+      <div class="login-card">
+        <h1>🔑 Verificar Cuenta</h1>
+        <p class="subtitle">Ingresa el código de 6 dígitos enviado a tu correo</p>
+
+        <div id="alertBox" class="alert" style="display: none;"></div>
+
+        <form id="verifyForm">
+          <div class="form-group">
+            <label for="verifyEmail">Correo electrónico</label>
+            <input type="email" id="verifyEmail" placeholder="tucorreo@gmail.com" required>
+          </div>
+
+          <div class="form-group">
+            <label for="verifyCode">Código de verificación</label>
+            <input
+              type="text"
+              id="verifyCode"
+              placeholder="123456"
+              maxlength="6"
+              style="letter-spacing: 6px; font-size: 1.4rem; text-align: center; font-weight: 800;"
+              required
+            >
+          </div>
+
+          <button type="submit" class="btn btn-primary" id="verifyBtn">
+            Verificar y Activar Cuenta
+          </button>
+        </form>
+
+        <p class="auth-footer">
+          ¿Ya tienes cuenta? <a href="index.html">Iniciar sesión</a>
+          &nbsp;·&nbsp;
+          <a href="register.html">Volver al registro</a>
+        </p>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="js/api.js"></script>
+  <script src="js/auth-verify.js"></script>
+</body>
+</html>

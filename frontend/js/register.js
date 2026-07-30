@@ -34,10 +34,8 @@ registerForm.addEventListener('submit', async (e) => {
       address: address || undefined
     }, false);
 
-    localStorage.setItem('token', data.token);
-    localStorage.setItem('user', JSON.stringify(data.user));
-
-    window.location.href = 'dashboard.html';
+    // Redirigir a login.html (index.html) avisando que se envió el correo
+    window.location.href = `index.html?verify=sent&email=${encodeURIComponent(email)}`;
 
   } catch (error) {
     showAlert(error.message);

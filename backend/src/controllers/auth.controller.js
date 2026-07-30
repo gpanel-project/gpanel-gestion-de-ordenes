@@ -40,7 +40,9 @@ const register = async (req, res) => {
   }
 };
 
-// ─── REGISTRO DE CLIENTE (users + clients en transacción) ──
+const { sendVerificationEmail } = require('../services/email.service');
+
+// ─── SOLICITUD DE REGISTRO DE CLIENTE (Guardado pendiente + Correo) ──
 const registerClient = async (req, res) => {
   const { name, email, password, company, phone, address } = req.body;
 
@@ -49,42 +51,103 @@ const registerClient = async (req, res) => {
   }
 
   try {
+    // 1. Verificar si el correo ya existe en usuarios registrados
     const [existing] = await db.query('SELECT id FROM users WHERE email = ?', [email]);
     if (existing.length > 0) {
       return res.status(400).json({ error: 'El email ya está registrado' });
     }
 
+    // 2. Generar código de verificación de 6 dígitos y encriptar clave
+    const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
     const salt = await bcrypt.genSalt(10);
     const password_hash = await bcrypt.hash(password, salt);
 
+    // 3. Guardar en tabla temporal pending_registrations
+    await db.query(
+      `INSERT INTO pending_registrations 
+        (name, email, password_hash, company, phone, address, verification_code) 
+       VALUES (?, ?, ?, ?, ?, ?, ?)
+       ON CONFLICT (email) DO UPDATE SET
+        name = EXCLUDED.name,
+        password_hash = EXCLUDED.password_hash,
+        company = EXCLUDED.company,
+        phone = EXCLUDED.phone,
+        address = EXCLUDED.address,
+        verification_code = EXCLUDED.verification_code,
+        created_at = CURRENT_TIMESTAMP`,
+      [name, email, password_hash, company || null, phone || null, address || null, verificationCode]
+    );
+
+    // 4. Enviar correo de verificación por Resend
+    await sendVerificationEmail(email, name, verificationCode);
+
+    res.status(200).json({
+      mensaje: 'Código de autenticación enviado a tu correo. Por favor revisa tu bandeja de entrada.',
+      email
+    });
+
+  } catch (error) {
+    console.error('Error en registerClient:', error.message);
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// ─── VERIFICACIÓN DE CÓDIGO (Transferencia de pending_registrations a BD) ──
+const verifyClient = async (req, res) => {
+  const { email, code } = req.body;
+
+  if (!email || !code) {
+    return res.status(400).json({ error: 'Email y código son obligatorios' });
+  }
+
+  try {
+    // 1. Buscar en registros pendientes
+    const [pending] = await db.query(
+      'SELECT * FROM pending_registrations WHERE email = ? AND verification_code = ?',
+      [email, code.trim()]
+    );
+
+    if (pending.length === 0) {
+      return res.status(400).json({ error: 'El código de verificación es incorrecto o ha expirado.' });
+    }
+
+    const pendingUser = pending[0];
+
+    // 2. Iniciar transacción en PostgreSQL para crear usuario + cliente
     const client = await db.pool.connect();
     try {
       await client.query('BEGIN');
 
+      // Crear usuario
       const userResult = await client.query(
         'INSERT INTO users (name, email, password_hash, role) VALUES ($1, $2, $3, $4) RETURNING id',
-        [name, email, password_hash, 'cliente']
+        [pendingUser.name, pendingUser.email, pendingUser.password_hash, 'cliente']
       );
       const userId = userResult.rows[0].id;
 
+      // Crear cliente
       await client.query(
         'INSERT INTO clients (name, company, email, phone, address, user_id) VALUES ($1, $2, $3, $4, $5, $6)',
-        [name, company || null, email, phone || null, address || null, userId]
+        [pendingUser.name, pendingUser.company, pendingUser.email, pendingUser.phone, pendingUser.address, userId]
       );
+
+      // Eliminar de pendientes
+      await client.query('DELETE FROM pending_registrations WHERE id = $1', [pendingUser.id]);
 
       await client.query('COMMIT');
       client.release();
 
+      // 3. Generar token JWT para inicio de sesión inmediato
       const token = jwt.sign(
-        { id: userId, email, role: 'cliente' },
+        { id: userId, email: pendingUser.email, role: 'cliente' },
         process.env.JWT_SECRET,
         { expiresIn: '8h' }
       );
 
-      res.status(201).json({
-        mensaje: 'Cliente registrado exitosamente',
+      res.status(200).json({
+        mensaje: '¡Cuenta verificada y creada exitosamente!',
         token,
-        user: { id: userId, name, email, role: 'cliente' }
+        user: { id: userId, name: pendingUser.name, email: pendingUser.email, role: 'cliente' }
       });
 
     } catch (err) {
@@ -94,6 +157,7 @@ const registerClient = async (req, res) => {
     }
 
   } catch (error) {
+    console.error('Error en verifyClient:', error.message);
     res.status(500).json({ error: error.message });
   }
 };
@@ -145,4 +209,4 @@ const login = async (req, res) => {
   }
 };
 
-module.exports = { register, login, registerClient };
+module.exports = { register, login, registerClient, verifyClient };
