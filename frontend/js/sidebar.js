@@ -5,18 +5,18 @@ function renderSidebar(activePage) {
 
   // Links visibles para todos
   let links = `
-    <a href="dashboard.html" class="${activePage === 'dashboard' ? 'active' : ''}">📊 Dashboard</a>
-    <a href="orders-list.html" class="${activePage === 'orders' ? 'active' : ''}">📋 Órdenes</a>
+    <a href="dashboard.html" class="${activePage === 'dashboard' ? 'active' : ''}"><i class="fa-solid fa-square-poll-vertical"></i> Dashboard</a>
+    <a href="orders-list.html" class="${activePage === 'orders' ? 'active' : ''}"><i class="fa-solid fa-clipboard"></i> Órdenes</a>
   `;
 
   // Links según rol
   if (user.role === 'admin') {
     links += `     
-      <a href="users.html" class="${activePage === 'users' ? 'active' : ''}">👥 Usuarios</a>
+      <a href="users.html" class="${activePage === 'users' ? 'active' : ''}"><i class="fa-solid fa-users"></i> Usuarios</a>
     `;
   } else if (user.role === 'cliente') {
     links += `
-      <a href="order-new.html" class="${activePage === 'order-new' ? 'active' : ''}">➕ Nueva Orden</a>
+      <a href="order-new.html" class="${activePage === 'order-new' ? 'active' : ''}"><i class="fa-solid fa-plus"></i> Nueva Orden</a>
     `;
   }
 

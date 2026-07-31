@@ -214,6 +214,48 @@
   text-decoration: underline;
 }
 
+/* ── Botón flotante de tema (auth.html) ───────────────────── */
+.theme-float {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1200;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 17px;
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(12px) saturate(180%);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  color: var(--navy);
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s var(--ease-out), box-shadow 0.3s var(--ease-out), background 0.3s;
+}
+.theme-float:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.16);
+}
+html[data-theme="dark"] .theme-float {
+  background: rgba(20, 47, 73, 0.75);
+  border-color: rgba(238, 243, 248, 0.12);
+  color: #fdba74;
+}
+
+/* ── Dark theme overrides ─────────────────────────────────── */
+html[data-theme="dark"] .login-card {
+  background: rgba(20, 47, 73, 0.75);
+  border-color: rgba(238, 243, 248, 0.1);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+html[data-theme="dark"] .login-card h1 {
+  color: var(--ink);
+}
+
 /* ── Responsive: ocultar panel en pantallas angostas ─────── */
 @media (max-width: 900px) {
   .brand-panel {

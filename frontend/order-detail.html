@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="css/styles.css">
   <link rel="stylesheet" href="css/layout.css">
   <link rel="stylesheet" href="css/order-detail.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/signature_pad/4.1.5/signature_pad.umd.min.js"></script>
 </head>
 <body>
@@ -28,6 +29,9 @@
       <div class="page-header">
         <h1 id="orderTitle">Orden de Servicio</h1>
         <a href="orders-list.html" class="btn btn-primary btn-sm">Volver</a>
+        <button class="sidebar-theme-btn" data-theme-toggle aria-label="Cambiar a modo oscuro" title="Modo oscuro">
+          <i class="fa-solid fa-moon"></i>
+        </button>
       </div>
       <div id="alertBox" class="alert alert-success"></div>
       <div class="detail-card" data-reveal>
@@ -99,6 +103,7 @@
   </div>
   <script src="js/api.js"></script>
   <script src="js/auth.js"></script>
+  <script src="js/theme.js"></script>
   <script src="js/sidebar.js"></script>
   <script src="js/order-detail.js"></script>
   <script src="js/effects.js"></script>

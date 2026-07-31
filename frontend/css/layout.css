@@ -139,6 +139,37 @@
   padding:10px 20px;
   font-size:13px;
 }
+.page-header .sidebar-theme-btn {
+  width:42px;
+  height:42px;
+  flex-shrink:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:50%;
+  font-size:16px;
+  background:rgba(255,255,255,0.6);
+  backdrop-filter:blur(12px) saturate(180%);
+  -webkit-backdrop-filter:blur(12px) saturate(180%);
+  border:1px solid rgba(255,255,255,0.5);
+  color:var(--navy);
+  box-shadow:var(--shadow);
+  transition:transform 0.3s var(--ease-out), box-shadow 0.3s var(--ease-out),
+             background-color 0.35s var(--ease-out), color 0.35s var(--ease-out);
+}
+.page-header .sidebar-theme-btn:hover {
+  transform:translateY(-2px);
+  box-shadow:var(--shadow-hover);
+  color:var(--accent);
+}
+html[data-theme="dark"] .page-header .sidebar-theme-btn {
+  background:rgba(20,47,73,0.6);
+  border-color:rgba(238,243,248,0.12);
+  color:#fdba74;
+}
+html[data-theme="dark"] .page-header .sidebar-theme-btn:hover {
+  color:var(--accent);
+}
 
 /* =============================================================
    5. Stats Grid
@@ -426,6 +457,75 @@ tbody tr:hover {
   background:rgba(0,0,0,0.1);
   color:var(--ink);
   transform:translateY(-1px);
+}
+
+/* =============================================================
+   6b. Dark theme overrides
+   ============================================================= */
+html[data-theme="dark"] .page-header h1 {
+  color:var(--ink);
+}
+html[data-theme="dark"] .main-content::before {
+  background:
+    radial-gradient(ellipse 50% 40% at 20% 30%, rgba(249,115,22,0.10) 0%, transparent 55%),
+    radial-gradient(ellipse 40% 35% at 80% 80%, rgba(42,82,152,0.14) 0%, transparent 50%);
+}
+html[data-theme="dark"] .stat-card,
+html[data-theme="dark"] .table-container,
+html[data-theme="dark"] .detail-card,
+html[data-theme="dark"] .modal-card {
+  background:rgba(20,47,73,0.55);
+  border-color:rgba(238,243,248,0.08);
+  box-shadow:
+    0 4px 24px rgba(0,0,0,0.3),
+    inset 0 1px 0 rgba(255,255,255,0.05);
+}
+html[data-theme="dark"] .stat-card {
+  border-left-color:var(--navy-light);
+}
+html[data-theme="dark"] .stat-card .number {
+  color:var(--ink);
+}
+html[data-theme="dark"] .stat-card.pendiente { border-left-color:#f59e0b; }
+html[data-theme="dark"] .stat-card.en_progreso { border-left-color:#3b82f6; }
+html[data-theme="dark"] .stat-card.completada { border-left-color:#22c55e; }
+html[data-theme="dark"] .stat-card.cancelada { border-left-color:#ef4444; }
+html[data-theme="dark"] .table-container:hover {
+  box-shadow:
+    0 8px 32px rgba(0,0,0,0.4),
+    inset 0 1px 0 rgba(255,255,255,0.05);
+}
+html[data-theme="dark"] tbody tr:hover {
+  background:rgba(249,115,22,0.06);
+}
+html[data-theme="dark"] .modal-overlay {
+  background:rgba(0,0,0,0.55);
+}
+html[data-theme="dark"] .modal-header h3 {
+  color:var(--ink);
+}
+html[data-theme="dark"] .modal-close:hover {
+  background:rgba(255,255,255,0.08);
+}
+html[data-theme="dark"] .btn-cancel {
+  background:rgba(255,255,255,0.06);
+  color:var(--ink-soft);
+}
+html[data-theme="dark"] .btn-cancel:hover {
+  background:rgba(255,255,255,0.12);
+  color:var(--ink);
+}
+html[data-theme="dark"] .badge-admin {
+  background:rgba(42,82,152,0.25);
+  color:#93c5fd;
+}
+html[data-theme="dark"] .badge-tecnico {
+  background:rgba(249,115,22,0.15);
+  color:#fdba74;
+}
+html[data-theme="dark"] .badge-cliente {
+  background:rgba(59,130,246,0.15);
+  color:#93c5fd;
 }
 
 /* =============================================================
