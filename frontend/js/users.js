@@ -19,28 +19,46 @@ async function loadUserStats() {
     const grid = document.getElementById('userStatsGrid');
     grid.innerHTML = `
       <div class="stat-card total">
-        <div class="number" data-count-to="${stats.total}">${stats.total}</div>
-        <div class="label">Total usuarios</div>
+        <div>
+          <div class="number" data-count-to="${stats.total}">${stats.total}</div>
+          <div class="label">Total usuarios</div>
+        </div>
+        <div class="stat-card__icon"><i class="fa-solid fa-users"></i></div>
       </div>
       <div class="stat-card" style="--stat-color:var(--navy-dark)">
-        <div class="number" data-count-to="${stats.admins}">${stats.admins}</div>
-        <div class="label">Administradores</div>
+        <div>
+          <div class="number" data-count-to="${stats.admins}">${stats.admins}</div>
+          <div class="label">Administradores</div>
+        </div>
+        <div class="stat-card__icon"><i class="fa-solid fa-user-shield"></i></div>
       </div>
       <div class="stat-card" style="--stat-color:#c2410c">
-        <div class="number" data-count-to="${stats.tecnicos}">${stats.tecnicos}</div>
-        <div class="label">Técnicos</div>
+        <div>
+          <div class="number" data-count-to="${stats.tecnicos}">${stats.tecnicos}</div>
+          <div class="label">Técnicos</div>
+        </div>
+        <div class="stat-card__icon"><i class="fa-solid fa-user-gear"></i></div>
       </div>
       <div class="stat-card" style="--stat-color:#1e40af">
-        <div class="number" data-count-to="${stats.clientes}">${stats.clientes}</div>
-        <div class="label">Clientes</div>
+        <div>
+          <div class="number" data-count-to="${stats.clientes}">${stats.clientes}</div>
+          <div class="label">Clientes</div>
+        </div>
+        <div class="stat-card__icon"><i class="fa-solid fa-address-card"></i></div>
       </div>
       <div class="stat-card" style="--stat-color:#22c55e">
-        <div class="number" data-count-to="${stats.activos}">${stats.activos}</div>
-        <div class="label">Usuarios activos</div>
+        <div>
+          <div class="number" data-count-to="${stats.activos}">${stats.activos}</div>
+          <div class="label">Usuarios activos</div>
+        </div>
+        <div class="stat-card__icon"><i class="fa-solid fa-user-check"></i></div>
       </div>
       <div class="stat-card" style="--stat-color:#ef4444">
-        <div class="number" data-count-to="${stats.pendientes}">${stats.pendientes}</div>
-        <div class="label">Pendientes de verificación</div>
+        <div>
+          <div class="number" data-count-to="${stats.pendientes}">${stats.pendientes}</div>
+          <div class="label">Pendientes de verificación</div>
+        </div>
+        <div class="stat-card__icon"><i class="fa-solid fa-user-clock"></i></div>
       </div>
     `;
   } catch (error) {
@@ -65,6 +83,7 @@ async function loadUsers() {
         ? '<span class="badge badge-completada" style="font-size:10px">Activo</span>'
         : '<span class="badge badge-cancelada" style="font-size:10px">Inactivo</span>';
       const canEdit = u.role === 'tecnico';
+      const canDelete = u.role === 'tecnico' || u.role === 'cliente';
       return `<tr>
         <td>${u.id}</td>
         <td><strong>${u.name}</strong></td>
@@ -72,11 +91,9 @@ async function loadUsers() {
         <td><span class="badge badge-${u.role}">${roleLabel}</span></td>
         <td>${statusBadge}</td>
         <td class="actions-cell">
-          ${canEdit
-            ? `<button class="btn-icon btn-edit" onclick="openEditModal(${u.id}, '${u.name.replace(/'/g, "\\'")}', '${u.email}', '${u.role}', ${u.active})" title="Editar"><i class="fa-solid fa-pen"></i></button>
-               <button class="btn-icon btn-delete" onclick="deleteUser(${u.id}, '${u.name.replace(/'/g, "\\'")}')" title="Eliminar"><i class="fa-solid fa-trash-can"></i></button>`
-            : '<span class="text-mute">—</span>'
-          }
+          ${canEdit ? `<button class="btn-icon btn-edit" onclick="openEditModal(${u.id}, '${u.name.replace(/'/g, "\\'")}', '${u.email}', '${u.role}', ${u.active})" title="Editar"><i class="fa-solid fa-pen"></i></button>` : ''}
+          ${canDelete ? `<button class="btn-icon btn-delete" onclick="deleteUser(${u.id}, '${u.name.replace(/'/g, "\\'")}')" title="Eliminar"><i class="fa-solid fa-trash-can"></i></button>` : ''}
+          ${!canEdit && !canDelete ? '<span class="text-mute">—</span>' : ''}
         </td>
       </tr>`;
     }).join('');
@@ -143,13 +160,13 @@ document.getElementById('userForm').addEventListener('submit', async (e) => {
       showAlert(`✅ Técnico <strong>${name}</strong> creado exitosamente`, 'success');
     }
     closeModal();
-    loadUsers();
+    // Recargamos la página para refrescar las métricas (stat-card) y la tabla
+    setTimeout(() => window.location.reload(), 900);
   } catch (error) {
     showAlert(error.message);
+    submitBtn.textContent = editingUserId ? 'Guardar cambios' : 'Crear Técnico';
+    submitBtn.disabled = false;
   }
-
-  submitBtn.textContent = editingUserId ? 'Guardar cambios' : 'Crear Técnico';
-  submitBtn.disabled = false;
 });
 
 // ─── Eliminar usuario ─────────────────────────────────────
@@ -159,7 +176,8 @@ async function deleteUser(id, name) {
   try {
     await apiRequest(`/users/${id}`, 'DELETE');
     showAlert(`🗑️ Usuario <strong>${name}</strong> eliminado`, 'success');
-    loadUsers();
+    // Recargamos la página para refrescar las métricas (stat-card) y la tabla
+    setTimeout(() => window.location.reload(), 900);
   } catch (error) {
     showAlert(error.message);
   }

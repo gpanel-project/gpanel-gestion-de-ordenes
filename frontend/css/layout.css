@@ -182,7 +182,6 @@ html[data-theme="dark"] .page-header .sidebar-theme-btn:hover {
 }
 
 /* ── Glass card base ──────────────────────────────────────── */
-.stat-card,
 .table-container,
 .detail-card,
 .modal-card {
@@ -195,17 +194,24 @@ html[data-theme="dark"] .page-header .sidebar-theme-btn:hover {
     inset 0 1px 0 rgba(255,255,255,0.7);
 }
 @supports not (backdrop-filter:blur(20px)) {
-  .stat-card,
   .table-container,
   .detail-card,
   .modal-card { background:rgba(255,255,255,0.92); }
 }
 
+/* ── Stat card (numero + label a la izquierda, badge circular
+   con icono a la derecha) ─────────────────────────────────── */
 .stat-card {
-  border-radius:var(--radius);
-  padding:22px;
-  border-left:4px solid var(--navy);
-  transition:transform 0.4s var(--ease-out),box-shadow 0.4s var(--ease-out),border-color 0.3s;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  background:var(--bg-card);
+  border-radius:20px;
+  padding:22px 24px;
+  border:1px solid var(--line);
+  box-shadow:0 4px 20px rgba(15,36,56,0.06);
+  transition:transform 0.4s var(--ease-out),box-shadow 0.4s var(--ease-out);
   position:relative;
   overflow:hidden;
 }
@@ -232,26 +238,14 @@ html[data-theme="dark"] .page-header .sidebar-theme-btn:hover {
 }
 .stat-card:hover {
   transform:translateY(-4px);
-  box-shadow:0 12px 40px rgba(0,0,0,0.08);
+  box-shadow:0 12px 36px rgba(15,36,56,0.1);
 }
 .stat-card:hover::before {
   transform:translate(20px,-40px) scale(1.1);
   opacity:0.04;
 }
-.stat-card.pendiente { border-left-color:#f59e0b; }
-.stat-card.pendiente::before { background:#f59e0b; }
-.stat-card.en_progreso { border-left-color:#3b82f6; }
-.stat-card.en_progreso::before { background:#3b82f6; }
-.stat-card.completada { border-left-color:#22c55e; }
-.stat-card.completada::before { background:#22c55e; }
-.stat-card.cancelada { border-left-color:#ef4444; }
-.stat-card.cancelada::before { background:#ef4444; }
-.stat-card.total { border-left-color:var(--navy); }
-.stat-card.total::before { background:var(--navy); }
-.stat-card[style*="--stat-color"] { border-left-color:var(--stat-color); }
-.stat-card[style*="--stat-color"]::before { background:var(--stat-color); }
 .stat-card .number {
-  font-size:30px;
+  font-size:28px;
   font-weight:800;
   color:var(--ink);
   letter-spacing:-0.03em;
@@ -260,14 +254,48 @@ html[data-theme="dark"] .page-header .sidebar-theme-btn:hover {
   z-index:1;
 }
 .stat-card .label {
-  font-size:12px;
+  font-size:13px;
   color:var(--ink-mute);
   margin-top:6px;
   font-weight:500;
-  text-transform:uppercase;
-  letter-spacing:0.04em;
   position:relative;
   z-index:1;
+}
+
+/* ── Badge circular del icono (halo tintado + circulo navy) ── */
+.stat-card__icon {
+  flex-shrink:0;
+  width:60px;
+  height:60px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:rgba(249,115,22,0.14);
+  position:relative;
+  z-index:1;
+}
+.stat-card__icon i {
+  width:38px;
+  height:38px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:var(--navy);
+  color:#fff;
+  font-size:15px;
+  box-shadow:0 4px 12px rgba(15,36,56,0.28);
+}
+
+/* tintes del halo por tipo de estado/categoria */
+.stat-card.pendiente    .stat-card__icon { background:rgba(245,158,11,0.16); }
+.stat-card.en_progreso  .stat-card__icon { background:rgba(206, 92, 206, 0.16); }
+.stat-card.completada   .stat-card__icon { background:rgba(34,197,94,0.16); }
+.stat-card.cancelada    .stat-card__icon { background:rgba(239,68,68,0.16); }
+.stat-card.total        .stat-card__icon { background:rgba(26,60,94,0.14); }
+.stat-card[style*="--stat-color"] .stat-card__icon {
+  background:color-mix(in srgb, var(--stat-color) 16%, transparent);
 }
 
 /* =============================================================
@@ -470,7 +498,6 @@ html[data-theme="dark"] .main-content::before {
     radial-gradient(ellipse 50% 40% at 20% 30%, rgba(249,115,22,0.10) 0%, transparent 55%),
     radial-gradient(ellipse 40% 35% at 80% 80%, rgba(42,82,152,0.14) 0%, transparent 50%);
 }
-html[data-theme="dark"] .stat-card,
 html[data-theme="dark"] .table-container,
 html[data-theme="dark"] .detail-card,
 html[data-theme="dark"] .modal-card {
@@ -481,15 +508,18 @@ html[data-theme="dark"] .modal-card {
     inset 0 1px 0 rgba(255,255,255,0.05);
 }
 html[data-theme="dark"] .stat-card {
-  border-left-color:var(--navy-light);
+  background:rgba(20,47,73,0.65);
+  border-color:rgba(238,243,248,0.08);
+  box-shadow:
+    0 4px 20px rgba(0,0,0,0.3),
+    inset 0 1px 0 rgba(255,255,255,0.04);
 }
 html[data-theme="dark"] .stat-card .number {
   color:var(--ink);
 }
-html[data-theme="dark"] .stat-card.pendiente { border-left-color:#f59e0b; }
-html[data-theme="dark"] .stat-card.en_progreso { border-left-color:#3b82f6; }
-html[data-theme="dark"] .stat-card.completada { border-left-color:#22c55e; }
-html[data-theme="dark"] .stat-card.cancelada { border-left-color:#ef4444; }
+html[data-theme="dark"] .stat-card__icon i {
+  box-shadow:0 4px 12px rgba(0,0,0,0.4);
+}
 html[data-theme="dark"] .table-container:hover {
   box-shadow:
     0 8px 32px rgba(0,0,0,0.4),

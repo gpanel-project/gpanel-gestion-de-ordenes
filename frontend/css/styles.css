@@ -297,8 +297,14 @@ html[data-theme="dark"] .form-hint {
   box-shadow:0 8px 24px var(--accent-glow);
 }
 .btn-create{
-  width: 15%;
-  margin-bottom: 20px;
+  display:inline-flex;
+  width:auto;
+  max-width:100%;
+  white-space:nowrap;
+  margin-bottom:20px;
+}
+@media (max-width:480px) {
+  .btn-create { width:100%; justify-content:center; }
 }
 .btn-sm {
   width:auto;
