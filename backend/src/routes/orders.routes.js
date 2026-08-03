@@ -5,7 +5,7 @@ const {
   createOrder, getOrders, getOrderById,
   updateOrder, updateOrderStatus, deleteOrder,
   saveSignature, downloadPDF,
-  getStats                    
+  getStats, getDashboardStats                    
 } = require('../controllers/orders.controller');
 
 // Crear orden → solo admin
@@ -15,6 +15,9 @@ router.post('/', verifyToken, verifyAdmin, createOrder);
 router.get('/', verifyToken, getOrders);
 
 router.get('/stats/summary', verifyToken, getStats);
+
+// Métricas del dashboard → solo admin
+router.get('/stats/dashboard', verifyToken, verifyAdmin, getDashboardStats);
 
 // Ver detalle → todos los roles
 router.get('/:id', verifyToken, getOrderById);

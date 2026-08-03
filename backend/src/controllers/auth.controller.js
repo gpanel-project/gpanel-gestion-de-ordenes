@@ -185,6 +185,11 @@ const login = async (req, res) => {
       return res.status(401).json({ error: 'Credenciales incorrectas' });
     }
 
+    // 2b. Verificamos que la cuenta esté activa
+    if (user.active === false) {
+      return res.status(403).json({ error: 'Tu cuenta está desactivada. Contacta al administrador para más información.' });
+    }
+
     // 3. Generamos el token JWT
     const token = jwt.sign(
       { id: user.id, email: user.email, role: user.role },

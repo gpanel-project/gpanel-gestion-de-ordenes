@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="css/styles.css">
   <link rel="stylesheet" href="css/layout.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
 </head>
 <body>
   <div class="bg-decoration" aria-hidden="true">
@@ -32,6 +33,41 @@
       </div>
       <div class="stats-grid" id="statsGrid" data-reveal>
       </div>
+      <section class="charts-grid" id="chartsGrid" data-reveal>
+        <div class="chart-card">
+          <div class="chart-card__header">
+            <h3><i class="fa-solid fa-circle-check"></i> Tasa de atención exitosa</h3>
+          </div>
+          <div class="chart-card__body chart-kpi">
+            <canvas id="successRateChart"></canvas>
+            <div class="chart-kpi__value" id="successRateValue">0%</div>
+          </div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-card__header">
+            <h3><i class="fa-solid fa-trophy"></i> Top técnicos</h3>
+          </div>
+          <div class="chart-card__body">
+            <canvas id="topTecnicosChart"></canvas>
+          </div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-card__header">
+            <h3><i class="fa-solid fa-building"></i> Top clientes</h3>
+          </div>
+          <div class="chart-card__body">
+            <canvas id="topClientesChart"></canvas>
+          </div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-card__header">
+            <h3><i class="fa-solid fa-list-check"></i> Carga de trabajo por técnico</h3>
+          </div>
+          <div class="chart-card__body">
+            <canvas id="cargaTecnicosChart"></canvas>
+          </div>
+        </div>
+      </section>
       <div class="table-container" data-reveal>
         <table>
           <thead>

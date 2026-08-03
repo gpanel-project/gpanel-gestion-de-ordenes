@@ -184,7 +184,8 @@ html[data-theme="dark"] .page-header .sidebar-theme-btn:hover {
 /* ── Glass card base ──────────────────────────────────────── */
 .table-container,
 .detail-card,
-.modal-card {
+.modal-card,
+.chart-card {
   background:rgba(255,255,255,0.6);
   backdrop-filter:blur(20px) saturate(180%);
   -webkit-backdrop-filter:blur(20px) saturate(180%);
@@ -196,7 +197,74 @@ html[data-theme="dark"] .page-header .sidebar-theme-btn:hover {
 @supports not (backdrop-filter:blur(20px)) {
   .table-container,
   .detail-card,
-  .modal-card { background:rgba(255,255,255,0.92); }
+  .modal-card,
+  .chart-card { background:rgba(255,255,255,0.92); }
+}
+
+/* ── Charts (métricas del dashboard) ─────────────────────── */
+.charts-grid {
+  display:none;
+  grid-template-columns:repeat(2,1fr);
+  gap:16px;
+  margin-bottom:32px;
+}
+.chart-card {
+  border-radius:var(--radius);
+  padding:20px;
+  transition:transform 0.3s var(--ease-out),box-shadow 0.3s var(--ease-out);
+}
+.chart-card:hover {
+  transform:translateY(-2px);
+  box-shadow:var(--shadow-hover);
+}
+.chart-card__header {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:14px;
+}
+.chart-card__header h3 {
+  color:var(--navy);
+  font-size:14px;
+  font-weight:600;
+  letter-spacing:-0.2px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.chart-card__header h3 i {
+  color:var(--accent);
+  font-size:15px;
+}
+.chart-card__body {
+  position:relative;
+  height:240px;
+}
+.chart-card__body canvas {
+  max-height:240px;
+}
+.chart-empty {
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:var(--ink-mute);
+  font-size:13px;
+  text-align:center;
+}
+.chart-kpi__value {
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:44px;
+  font-weight:800;
+  color:var(--navy);
+  font-family:var(--font-heading);
+  letter-spacing:-0.03em;
+  pointer-events:none;
 }
 
 /* ── Stat card (numero + label a la izquierda, badge circular
@@ -500,7 +568,8 @@ html[data-theme="dark"] .main-content::before {
 }
 html[data-theme="dark"] .table-container,
 html[data-theme="dark"] .detail-card,
-html[data-theme="dark"] .modal-card {
+html[data-theme="dark"] .modal-card,
+html[data-theme="dark"] .chart-card {
   background:rgba(20,47,73,0.55);
   border-color:rgba(238,243,248,0.08);
   box-shadow:
@@ -545,6 +614,10 @@ html[data-theme="dark"] .btn-cancel:hover {
   background:rgba(255,255,255,0.12);
   color:var(--ink);
 }
+html[data-theme="dark"] .chart-card__header h3,
+html[data-theme="dark"] .chart-kpi__value {
+  color:var(--ink);
+}
 html[data-theme="dark"] .badge-admin {
   background:rgba(42,82,152,0.25);
   color:#93c5fd;
@@ -572,6 +645,8 @@ html[data-theme="dark"] .badge-cliente {
   .sidebar-nav a:hover, .sidebar-nav a.active { border-left:none; border-bottom-color:var(--accent); }
   .main-content { padding:20px; }
   .stats-grid { grid-template-columns:repeat(2,1fr); }
+  .charts-grid { grid-template-columns:1fr; }
+  .chart-card__body { height:220px; }
   .table-container table { min-width:600px; }
   .modal-card { padding:24px; }
 }

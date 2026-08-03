@@ -339,9 +339,68 @@
     }
   };
 
+  // ─── MÉTRICAS DEL DASHBOARD (solo admin) ──────────────────
+  const getDashboardStats = async (req, res) => {
+    try {
+      // 1. Tasa de atención exitosa
+      const [resumen] = await db.query(`
+        SELECT
+          SUM(CASE WHEN status = 'completada' THEN 1 ELSE 0 END) as completadas,
+          SUM(CASE WHEN status = 'cancelada' THEN 1 ELSE 0 END) as canceladas
+        FROM service_orders
+      `);
+
+      const completadas = parseInt(resumen[0]?.completadas || 0, 10);
+      const canceladas  = parseInt(resumen[0]?.canceladas || 0, 10);
+      const resueltas   = completadas + canceladas;
+      const tasaExito   = resueltas > 0 ? Math.round((completadas / resueltas) * 100) : 0;
+
+      // 2. Top técnicos por órdenes completadas
+      const [topTecnicos] = await db.query(`
+        SELECT u.name, COUNT(*) as completadas
+        FROM service_orders so
+        JOIN users u ON so.technician_id = u.id
+        WHERE so.status = 'completada'
+        GROUP BY u.id, u.name
+        ORDER BY completadas DESC
+        LIMIT 5
+      `);
+
+      // 3. Top clientes por volumen (e ingresos generados)
+      const [topClientes] = await db.query(`
+        SELECT c.name, c.company, COUNT(*) as total,
+               COALESCE(SUM(so.total_cost), 0) as ingresos
+        FROM service_orders so
+        JOIN clients c ON so.client_id = c.id
+        GROUP BY c.id, c.name, c.company
+        ORDER BY total DESC
+        LIMIT 5
+      `);
+
+      // 4. Carga de trabajo actual por técnico
+      const [cargaTecnicos] = await db.query(`
+        SELECT u.name, COUNT(*) as carga
+        FROM service_orders so
+        JOIN users u ON so.technician_id = u.id
+        WHERE so.status IN ('pendiente', 'en_progreso')
+        GROUP BY u.id, u.name
+        ORDER BY carga DESC
+      `);
+
+      res.json({
+        resumen: { completadas, canceladas, tasaExito },
+        topTecnicos,
+        topClientes,
+        cargaTecnicos
+      });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  };
+
   module.exports = {
     createOrder, getOrders, getOrderById,
     updateOrder, updateOrderStatus, deleteOrder,
     saveSignature, downloadPDF, 
-    getStats                
+    getStats, getDashboardStats                
   };
