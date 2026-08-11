@@ -4,9 +4,10 @@ const { verifyToken, verifyAdmin, verifyAdminOrTecnico } = require('../middlewar
 const {
   createOrder, getOrders, getOrderById,
   updateOrder, updateOrderStatus, deleteOrder,
-  saveSignature, downloadPDF,
+  saveSignature, downloadPDF, uploadOrderImage, getOrderImages,
   getStats, getDashboardStats                    
 } = require('../controllers/orders.controller');
+const upload = require('../middlewares/upload.middleware');
 
 // Crear orden → solo admin
 router.post('/', verifyToken, verifyAdmin, createOrder);
@@ -33,6 +34,12 @@ router.delete('/:id', verifyToken, verifyAdmin, deleteOrder);
 
 // Guarda la firma digital 
 router.post('/:id/signature', verifyToken, saveSignature);   
+
+// Subir imagen/PDF adjunto a una orden (admin o técnico)
+router.post('/:id/images', verifyToken, verifyAdminOrTecnico, upload.single('image'), uploadOrderImage);
+
+// Listar adjuntos de una orden
+router.get('/:id/images', verifyToken, getOrderImages);
 
 // Descarga el PDF
 router.get('/:id/pdf',        verifyToken, downloadPDF);   

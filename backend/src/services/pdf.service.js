@@ -1,21 +1,22 @@
 const PDFDocument = require('pdfkit');
-const fs = require('fs');
-const path = require('path');
+const cloudinary = require('../config/cloudinary');
 
+/**
+ * Genera el PDF de la orden en memoria y lo sube a Cloudinary.
+ * Devuelve un objeto con la URL segura y el public_id (para poder
+ * borrarlo o referenciarlo después).
+ */
 const generateOrderPDF = (order) => {
   return new Promise((resolve, reject) => {
 
-    // Ruta donde se guardará el PDF
-    const fileName = `orden-${order.order_number}.pdf`;
-    const filePath = path.join(__dirname, '../../pdfs', fileName);
-    console.log('Ruta del PDF:', filePath);
+    const fileName = `orden-${order.order_number}`;
 
     // Creamos el documento PDF
     const doc = new PDFDocument({ margin: 50 });
 
-    // Lo conectamos a un archivo
-    const stream = fs.createWriteStream(filePath);
-    doc.pipe(stream);
+    // En vez de escribir a disco, acumulamos el PDF en memoria (buffer)
+    const chunks = [];
+    doc.on('data', (chunk) => chunks.push(chunk));
 
     // ── ENCABEZADO ────────────────────────────────────────
     doc
@@ -29,7 +30,6 @@ const generateOrderPDF = (order) => {
 
     doc.moveDown();
 
-    // Línea separadora
     doc
       .moveTo(50, doc.y)
       .lineTo(550, doc.y)
@@ -72,7 +72,6 @@ const generateOrderPDF = (order) => {
 
     doc.moveDown();
 
-    // Línea separadora
     doc
       .moveTo(50, doc.y)
       .lineTo(550, doc.y)
@@ -140,7 +139,6 @@ const generateOrderPDF = (order) => {
 
     doc.moveDown();
 
-    // Línea separadora
     doc
       .moveTo(50, doc.y)
       .lineTo(550, doc.y)
@@ -158,7 +156,6 @@ const generateOrderPDF = (order) => {
 
     if (order.signature_base64) {
       try {
-        // Convertimos el base64 a imagen y la insertamos
         const base64Data = order.signature_base64.replace(/^data:image\/\w+;base64,/, '');
         const imageBuffer = Buffer.from(base64Data, 'base64');
 
@@ -195,12 +192,43 @@ const generateOrderPDF = (order) => {
         { align: 'center' }
       );
 
-    // Cerramos el documento
     doc.end();
 
-    // Cuando termina de escribir el archivo
-    stream.on('finish', () => resolve(filePath));
-    stream.on('error', reject);
+    // Cuando termina de generar el PDF en memoria, lo subimos a Cloudinary
+    doc.on('end', async () => {
+      try {
+        const pdfBuffer = Buffer.concat(chunks);
+
+        const uploadResult = await new Promise((resolveUpload, rejectUpload) => {
+          const uploadStream = cloudinary.uploader.upload_stream(
+            {
+              resource_type: 'raw',  // 'raw' porque es un PDF, no una imagen
+              folder: 'ordenes-pdf', // carpeta dentro del bucket de Cloudinary
+              public_id: fileName,
+              overwrite: true,
+              // NOTA: NO forzamos format: 'pdf'. En esta cuenta de Cloudinary,
+              // la entrega de URLs con extensión .pdf está restringida (HTTP 401).
+              // El PDF se guarda igual en Cloudinary y downloadPDF lo transmite
+              // al navegador con los headers correctos.
+            },
+            (error, result) => {
+              if (error) return rejectUpload(error);
+              resolveUpload(result);
+            }
+          );
+          uploadStream.end(pdfBuffer);
+        });
+
+        resolve({
+          url: uploadResult.secure_url,
+          public_id: uploadResult.public_id,
+        });
+      } catch (uploadError) {
+        reject(uploadError);
+      }
+    });
+
+    doc.on('error', reject);
   });
 };
 

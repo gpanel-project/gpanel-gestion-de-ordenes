@@ -23,7 +23,7 @@ function renderSidebar(activePage) {
   return `
     <div class="sidebar">
       <div class="sidebar-header">
-        <img src="assets/gpanel-logo-light.png" alt="GPanel" class="sidebar-header__logo">
+        <img src="https://res.cloudinary.com/ztbcsp9h/image/upload/gpanel-web/gpanel-logo-light.png" alt="GPanel" class="sidebar-header__logo">
         <p>${user.name} (${user.role})</p>
       </div>
       <nav class="sidebar-nav">

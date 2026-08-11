@@ -196,9 +196,8 @@
     }
   };
 
-  const path = require('path');
-  const fs   = require('fs');
   const { generateOrderPDF } = require('../services/pdf.service');
+  const cloudinary = require('../config/cloudinary');
 
   // ─── GUARDAR FIRMA Y GENERAR PDF ──────────────────────────
   const saveSignature = async (req, res) => {
@@ -244,23 +243,18 @@
 
       const order = orders[0];
 
-      // 3. Generamos el PDF
-      const pdfPath = await generateOrderPDF(order);
+      // 3. Generamos el PDF y lo subimos a Cloudinary
+      const { url: pdfUrl, public_id: pdfPublicId } = await generateOrderPDF(order);
 
-      // 4. Guardamos la ruta del PDF en la BD
-      const relativePath = path.relative(
-        path.join(__dirname, '../../'),
-        pdfPath
-      );
-
+      // 4. Guardamos la URL del PDF en la BD
       await db.query(
-        'UPDATE service_orders SET pdf_path = ? WHERE id = ?',
-        [relativePath, id]
+        'UPDATE service_orders SET pdf_path = ?, pdf_public_id = ? WHERE id = ?',
+        [pdfUrl, pdfPublicId, id]
       );
 
-      // 5. Enviamos el correo
+      // 5. Enviamos el correo (adjuntando el PDF desde la URL de Cloudinary)
       try {
-        await sendOrderEmail(order, pdfPath);
+        await sendOrderEmail(order, pdfUrl);
       } catch (emailError) {
         // Si el correo falla no rompemos todo, solo avisamos
         console.error('Error enviando correo:', emailError.message);
@@ -268,7 +262,7 @@
 
       res.json({
         mensaje: '✅ Firma guardada, PDF generado y correo enviado exitosamente',
-        pdf: relativePath
+        pdf: pdfUrl
       });
 
     } catch (error) {
@@ -277,6 +271,10 @@
   };
 
   // ─── DESCARGAR PDF ────────────────────────────────────────
+  // El PDF vive en Cloudinary (carpeta ordenes-pdf). Esta cuenta de
+  // Cloudinary restringe la entrega pública de archivos con extensión
+  // .pdf, así que en vez de redirigir, descargamos el archivo desde
+  // Cloudinary y lo enviamos al navegador con los headers correctos.
   const downloadPDF = async (req, res) => {
     const { id } = req.params;
 
@@ -294,14 +292,94 @@
         return res.status(404).json({ error: 'Esta orden aún no tiene PDF generado' });
       }
 
-      const filePath = path.join(__dirname, '../../', orders[0].pdf_path);
+      // Descargamos el PDF desde Cloudinary y lo transmitimos
+      const response = await fetch(orders[0].pdf_path);
+      if (!response.ok) {
+        throw new Error('No se pudo obtener el PDF desde Cloudinary');
+      }
+      const buffer = Buffer.from(await response.arrayBuffer());
 
-      if (!fs.existsSync(filePath)) {
-        return res.status(404).json({ error: 'Archivo PDF no encontrado en el servidor' });
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', `attachment; filename="${orders[0].order_number}.pdf"`);
+      res.setHeader('Content-Length', buffer.length);
+      return res.send(buffer);
+
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  };
+
+  // ─── SUBIR IMAGEN ADJUNTA A UNA ORDEN ─────────────────────
+  // Espera un archivo en req.file (middleware multer, campo 'image')
+  const uploadOrderImage = async (req, res) => {
+    const { id } = req.params;
+
+    if (!req.file) {
+      return res.status(400).json({ error: 'No se envió ninguna imagen' });
+    }
+
+    try {
+      const [existing] = await db.query('SELECT id FROM service_orders WHERE id = ?', [id]);
+      if (existing.length === 0) {
+        return res.status(404).json({ error: 'Orden no encontrada' });
       }
 
-      res.download(filePath, `${orders[0].order_number}.pdf`);
+      // Subimos el buffer del archivo a Cloudinary.
+      // Si es PDF usamos resource_type 'raw'; si es imagen, 'image'.
+      const isPdf = req.file.mimetype === 'application/pdf';
+      const resourceType = isPdf ? 'raw' : 'image';
+      const folder = isPdf ? 'ordenes-adjuntos' : 'ordenes-imagenes';
+      const extension = isPdf ? 'pdf' : req.file.originalname.split('.').pop() || 'png';
 
+      const uploadOptions = {
+        resource_type: resourceType,
+        folder,
+        public_id: `orden-${id}-${Date.now()}`,
+        format: extension,
+      };
+      if (resourceType === 'raw') delete uploadOptions.format;
+
+      const uploadResult = await new Promise((resolve, reject) => {
+        const uploadStream = cloudinary.uploader.upload_stream(
+          uploadOptions,
+          (error, result) => {
+            if (error) return reject(error);
+            resolve(result);
+          }
+        );
+        uploadStream.end(req.file.buffer);
+      });
+
+      // Guardamos el archivo en una tabla aparte (order_images) para permitir varios por orden
+      await db.query(
+        `INSERT INTO order_images (order_id, image_url, public_id, file_type) VALUES (?, ?, ?, ?)`,
+        [id, uploadResult.secure_url, uploadResult.public_id, resourceType]
+      );
+
+      res.status(201).json({
+        mensaje: 'Archivo subido exitosamente',
+        url: uploadResult.secure_url
+      });
+
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  };
+
+  // ─── LISTAR ARCHIVOS ADJUNTOS DE UNA ORDEN ────────────────
+  const getOrderImages = async (req, res) => {
+    const { id } = req.params;
+
+    try {
+      const [images] = await db.query(
+        `SELECT id, image_url, public_id, file_type, created_at
+         FROM order_images
+         WHERE order_id = ?
+         ORDER BY created_at DESC`,
+        [id]
+      );
+
+      res.json(images);
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
@@ -401,6 +479,6 @@
   module.exports = {
     createOrder, getOrders, getOrderById,
     updateOrder, updateOrderStatus, deleteOrder,
-    saveSignature, downloadPDF, 
+    saveSignature, downloadPDF, uploadOrderImage, getOrderImages,
     getStats, getDashboardStats                
   };

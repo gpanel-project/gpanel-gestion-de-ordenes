@@ -6,7 +6,8 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 const FROM_EMAIL = process.env.EMAIL_FROM || 'GPanel Mantenimiento <onboarding@resend.dev>';
 
 // ── 1. Envío de Órdenes de Servicio Completadas ─────────────
-const sendOrderEmail = async (order, pdfPath) => {
+// pdfUrl: URL segura de Cloudinary (order.pdf_url), no ruta local
+const sendOrderEmail = async (order, pdfUrl) => {
   try {
     const htmlContent = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -83,13 +84,12 @@ const sendOrderEmail = async (order, pdfPath) => {
       </div>
     `;
 
-    // Cargar adjunto PDF si existe
+    // Cargar adjunto PDF desde la URL de Cloudinary
     const attachments = [];
-    if (pdfPath && fs.existsSync(pdfPath)) {
-      const pdfBuffer = fs.readFileSync(pdfPath);
+    if (pdfUrl) {
       attachments.push({
         filename: `${order.order_number}.pdf`,
-        content: pdfBuffer,
+        path: pdfUrl, // Resend soporta adjuntar directo desde una URL
       });
     }
 

@@ -33,6 +33,15 @@ app.use('/api/auth', authRoutes);
 app.use('/api/users', usersRoutes);
 app.use('/api/orders', ordersRoutes);
 
+// ── Manejo de errores (multer y otros) en JSON ─────────
+app.use((err, req, res, next) => {
+  if (err) {
+    const status = err.status || err.statusCode || 500;
+    return res.status(status).json({ error: err.message });
+  }
+  next();
+});
+
 // ── Servidor ───────────────────────────────────────────
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

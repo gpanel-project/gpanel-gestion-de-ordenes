@@ -34,7 +34,7 @@ const db = {
   }
 };
 
-// Crear tabla de registros pendientes si no existe
+// Crear tablas y columnas que necesitan existir siempre
 const initDb = async () => {
   try {
     await pool.query(`
@@ -51,8 +51,28 @@ const initDb = async () => {
       );
     `);
     console.log('✅ Tabla pending_registrations lista en PostgreSQL');
+
+    // Adjuntos de cada orden subidos a Cloudinary (imágenes y PDFs)
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS order_images (
+        id SERIAL PRIMARY KEY,
+        order_id INTEGER NOT NULL REFERENCES service_orders(id) ON DELETE CASCADE,
+        image_url TEXT NOT NULL,
+        public_id TEXT,
+        file_type TEXT DEFAULT 'image',
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+    console.log('✅ Tabla order_images lista en PostgreSQL');
+
+    // Columna que guarda el public_id del PDF en Cloudinary
+    await pool.query(`
+      ALTER TABLE service_orders
+      ADD COLUMN IF NOT EXISTS pdf_public_id TEXT;
+    `);
+    console.log('✅ Columna pdf_public_id asegurada en service_orders');
   } catch (err) {
-    console.error('❌ Error inicializando tabla pending_registrations:', err.message);
+    console.error('❌ Error inicializando tablas en PostgreSQL:', err.message);
   }
 };
 

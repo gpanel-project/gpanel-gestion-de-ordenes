@@ -74,11 +74,11 @@
         var y = (e.clientY - r.top) / r.height - 0.5;
         card.style.setProperty("--rx", (-y * 4).toFixed(1) + "deg");
         card.style.setProperty("--ry", (x * 4).toFixed(1) + "deg");
-        card.style.transform = "perspective(800px) rotateX(var(--rx)) rotateY(var(--ry))";
+        // card.style.transform = "perspective(800px) rotateX(var(--rx)) rotateY(var(--ry))";
       });
-      card.addEventListener("mouseleave", function () {
-        card.style.transform = "perspective(800px) rotateX(0deg) rotateY(0deg)";
-      });
+      // card.addEventListener("mouseleave", function () {
+      //   card.style.transform = "perspective(800px) rotateX(0deg) rotateY(0deg)";
+      // });
     });
   }
 
