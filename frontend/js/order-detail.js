@@ -52,6 +52,17 @@ function renderOrder(order) {
     document.getElementById('editSection').style.display = 'none';
   }
 
+  // ── Órdenes completadas: el estado queda bloqueado ──────
+  const statusSelect = document.getElementById('statusSelect');
+  const statusLockedHint = document.getElementById('statusLockedHint');
+  if (order.status === 'completada') {
+    statusSelect.disabled = true;
+    if (statusLockedHint) statusLockedHint.style.display = 'block';
+  } else {
+    statusSelect.disabled = false;
+    if (statusLockedHint) statusLockedHint.style.display = 'none';
+  }
+
   // ── Si ya tiene firma, la mostramos ─────────────────────
   if (order.signature_base64) {
     document.getElementById('signatureDisplay').style.display = 'block';
@@ -80,10 +91,11 @@ document.getElementById('editForm').addEventListener('submit', async (e) => {
       total_cost: document.getElementById('total_cost').value
     });
 
-    // 2. Actualizamos el estado (si cambió)
-    await apiRequest(`/orders/${orderId}/status`, 'PATCH', {
-      status: document.getElementById('statusSelect').value
-    });
+    // 2. Actualizamos el estado (solo si cambió; en completadas queda bloqueado)
+    const newStatus = document.getElementById('statusSelect').value;
+    if (newStatus !== currentOrder.status) {
+      await apiRequest(`/orders/${orderId}/status`, 'PATCH', { status: newStatus });
+    }
 
     showAlert('✅ Cambios guardados exitosamente');
     loadOrder();

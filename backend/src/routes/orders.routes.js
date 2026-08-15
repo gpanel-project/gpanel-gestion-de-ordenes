@@ -32,8 +32,8 @@ router.patch('/:id/status', verifyToken, verifyAdminOrTecnico, updateOrderStatus
 // Eliminar → solo admin
 router.delete('/:id', verifyToken, verifyAdmin, deleteOrder);
 
-// Guarda la firma digital 
-router.post('/:id/signature', verifyToken, saveSignature);   
+// Guarda la firma digital (solo admin o tecnico)
+router.post('/:id/signature', verifyToken, verifyAdminOrTecnico, saveSignature);
 
 // Subir imagen/PDF adjunto a una orden (admin o técnico)
 router.post('/:id/images', verifyToken, verifyAdminOrTecnico, upload.single('image'), uploadOrderImage);

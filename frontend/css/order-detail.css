@@ -92,4 +92,14 @@ html[data-theme="dark"] #signatureCanvas {
 @media (max-width:768px) {
   .detail-card { padding:18px; }
   .detail-grid { grid-template-columns:1fr; }
+  .detail-card h3 { font-size:14px; }
+}
+
+@media (max-width:480px) {
+  .detail-card { padding:16px; }
+  .detail-grid { gap:12px; }
+  #signatureCanvas { height:160px !important; }
+  #signatureImg { max-width:100% !important; height:auto; }
+  #signaturePadContainer > div:last-child { flex-direction:column; }
+  #signaturePadContainer > div:last-child .btn { width:100%; }
 }

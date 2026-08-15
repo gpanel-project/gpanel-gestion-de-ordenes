@@ -59,6 +59,7 @@ html[data-theme="dark"] {
 html {
   -webkit-text-size-adjust: 100%;
   tab-size: 2;
+  overflow-x: hidden;
 }
 
 body {
@@ -69,6 +70,7 @@ body {
   color: var(--ink);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  min-width: 320px;
 }
 
 img,
@@ -433,6 +435,17 @@ html[data-theme="dark"] .form-hint {
 .btn-secondary:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 24px var(--accent-glow);
+}
+
+.btn-danger {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+  box-shadow: 0 4px 14px rgba(239, 68, 68, 0.35);
+}
+
+.btn-danger:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(239, 68, 68, 0.45);
 }
 
 .btn-create {

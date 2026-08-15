@@ -35,9 +35,26 @@ function renderOrders(orders) {
       <td><span class="badge badge-${order.status}">${order.status.replace('_', ' ')}</span></td>
       <td>$${Number(order.total_cost || 0).toLocaleString('es-CO')}</td>
       <td>${new Date(order.created_at).toLocaleDateString('es-CO')}</td>
-      <td><a href="order-detail.html?id=${order.id}" class="btn btn-primary btn-sm">Ver</a></td>
+      <td>
+        <a href="order-detail.html?id=${order.id}" class="btn btn-primary btn-sm">Ver</a>
+        ${user.role === 'admin' && order.status === 'completada'
+          ? `<button class="btn btn-danger btn-sm" onclick="deleteCompletedOrder(${order.id})">Eliminar</button>`
+          : ''}
+      </td>
     </tr>
   `).join('');
+}
+
+// ─── Eliminar una orden COMPLETADA (solo admin) ──────────────
+async function deleteCompletedOrder(id) {
+  if (!confirm('¿Eliminar esta orden completada?\n\nEsta acción no se puede deshacer.')) return;
+
+  try {
+    await apiRequest(`/orders/${id}`, 'DELETE');
+    loadOrders();
+  } catch (error) {
+    alert('No se pudo eliminar la orden:\n' + error.message);
+  }
 }
 
 // ─── Filtro por estado ──────────────────────────────────────

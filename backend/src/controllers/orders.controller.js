@@ -85,7 +85,7 @@
           FROM service_orders so
           JOIN clients c ON so.client_id = c.id
           JOIN users u   ON so.technician_id = u.id
-          WHERE so.client_id = ?
+          WHERE c.user_id = ?
           ORDER BY so.created_at DESC
         `;
         params = [req.user.id];
@@ -138,9 +138,14 @@
     const { diagnosis, work_done, parts_used, total_cost } = req.body;
 
     try {
-      const [existing] = await db.query('SELECT id FROM service_orders WHERE id = ?', [id]);
+      const [existing] = await db.query('SELECT id, technician_id FROM service_orders WHERE id = ?', [id]);
       if (existing.length === 0) {
         return res.status(404).json({ error: 'Orden no encontrada' });
+      }
+
+      // Un técnico solo puede modificar las órdenes que le fueron asignadas
+      if (req.user.role === 'tecnico' && existing[0].technician_id !== req.user.id) {
+        return res.status(403).json({ error: 'No puedes modificar una orden que no te fue asignada' });
       }
 
       await db.query(
@@ -167,9 +172,19 @@
     }
 
     try {
-      const [existing] = await db.query('SELECT id FROM service_orders WHERE id = ?', [id]);
+      const [existing] = await db.query('SELECT id, technician_id, status FROM service_orders WHERE id = ?', [id]);
       if (existing.length === 0) {
         return res.status(404).json({ error: 'Orden no encontrada' });
+      }
+
+      // Las órdenes completadas quedan bloqueadas: no cambian de estado
+      if (existing[0].status === 'completada') {
+        return res.status(400).json({ error: 'Las órdenes completadas no pueden cambiar de estado' });
+      }
+
+      // Un técnico solo puede cambiar el estado de sus propias órdenes
+      if (req.user.role === 'tecnico' && existing[0].technician_id !== req.user.id) {
+        return res.status(403).json({ error: 'No puedes cambiar el estado de una orden que no te fue asignada' });
       }
 
       await db.query('UPDATE service_orders SET status = ? WHERE id = ?', [status, id]);
@@ -179,16 +194,45 @@
     }
   };
 
-  // ─── ELIMINAR ORDEN ───────────────────────────────────────
+  // ─── ELIMINAR ORDEN (solo órdenes COMPLETADA) ──────────────
   const deleteOrder = async (req, res) => {
     const { id } = req.params;
 
     try {
-      const [existing] = await db.query('SELECT id FROM service_orders WHERE id = ?', [id]);
+      const [existing] = await db.query(
+        'SELECT id, status, pdf_public_id FROM service_orders WHERE id = ?',
+        [id]
+      );
       if (existing.length === 0) {
         return res.status(404).json({ error: 'Orden no encontrada' });
       }
 
+      // Solo las órdenes completadas pueden eliminarse
+      if (existing[0].status !== 'completada') {
+        return res.status(400).json({ error: 'Solo las órdenes en estado COMPLETADA pueden eliminarse' });
+      }
+
+      // 1. Limpiamos adjuntos de Cloudinary (best effort, no bloquea el borrado)
+      const cloudinary = require('../config/cloudinary');
+      try {
+        if (existing[0].pdf_public_id) {
+          await cloudinary.uploader.destroy(existing[0].pdf_public_id, { resource_type: 'raw' });
+        }
+        const [images] = await db.query(
+          'SELECT public_id, file_type FROM order_images WHERE order_id = ?',
+          [id]
+        );
+        for (const img of images) {
+          if (img.public_id) {
+            const resourceType = img.file_type === 'raw' ? 'raw' : 'image';
+            await cloudinary.uploader.destroy(img.public_id, { resource_type: resourceType });
+          }
+        }
+      } catch (cloudError) {
+        console.error('⚠️ Error limpiando archivos de Cloudinary:', cloudError.message);
+      }
+
+      // 2. Borramos la orden (las imágenes se eliminan en cascada por la FK)
       await db.query('DELETE FROM service_orders WHERE id = ?', [id]);
       res.json({ mensaje: 'Orden eliminada exitosamente' });
     } catch (error) {
@@ -209,15 +253,7 @@
     }
 
     try {
-      // 1. Guardamos la firma en la BD
-      await db.query(
-        `UPDATE service_orders 
-        SET signature_base64 = ?, signature_date = NOW(), status = 'completada'
-        WHERE id = ?`,
-        [signature_base64, id]
-      );
-
-      // 2. Obtenemos todos los datos de la orden
+      // 1. Obtenemos todos los datos de la orden (también valida que exista)
       const [orders] = await db.query(
         `SELECT 
           so.*,
@@ -242,6 +278,19 @@
       }
 
       const order = orders[0];
+
+      // 1b. Un técnico solo puede firmar las órdenes que le fueron asignadas
+      if (req.user.role === 'tecnico' && order.technician_id !== req.user.id) {
+        return res.status(403).json({ error: 'No puedes firmar una orden que no te fue asignada' });
+      }
+
+      // 2. Guardamos la firma en la BD
+      await db.query(
+        `UPDATE service_orders 
+        SET signature_base64 = ?, signature_date = NOW(), status = 'completada'
+        WHERE id = ?`,
+        [signature_base64, id]
+      );
 
       // 3. Generamos el PDF y lo subimos a Cloudinary
       const { url: pdfUrl, public_id: pdfPublicId } = await generateOrderPDF(order);
@@ -395,7 +444,8 @@
         whereClause = 'WHERE technician_id = ?';
         params = [req.user.id];
       } else if (req.user.role === 'cliente') {
-        whereClause = 'WHERE client_id = ?';
+        // client_id pertenece a la tabla clients; el token trae el id de users
+        whereClause = 'WHERE client_id IN (SELECT id FROM clients WHERE user_id = ?)';
         params = [req.user.id];
       }
       // admin no tiene whereClause, ve todo

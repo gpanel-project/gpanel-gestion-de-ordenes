@@ -18,14 +18,14 @@ Content-Type: application/json
 ### 3. Listar usuarios CON token (reemplaza TU_TOKEN con el del login)
 GET http://localhost:3000/api/users
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJtYXJjb3NAZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzc5MzI5NTkwLCJleHAiOjE3NzkzNTgzOTB9.srfOdXkeAj2Cv90Zzc1_Kucm0ssX2jJFA9hVqn_G1-Y
+Authorization: Bearer TU_TOKEN
 
 ###
 
 ### 4. Crear nuevo usuario CON token
 POST http://localhost:3000/api/users
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJtYXJjb3NAZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzc5MzI5NTkwLCJleHAiOjE3NzkzNTgzOTB9.srfOdXkeAj2Cv90Zzc1_Kucm0ssX2jJFA9hVqn_G1-Y
+Authorization: Bearer TU_TOKEN
 
 {
   "name": "Carlos Tecnico",
@@ -34,10 +34,12 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiO
   "role": "tecnico"
 }
 
-### 1. Crear orden (reemplaza TU_TOKEN)
+###
+
+### 5. Crear orden (reemplaza TU_TOKEN)
 POST http://localhost:3000/api/orders
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJtYXJjb3NAZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzc5MzMwMjkzLCJleHAiOjE3NzkzNTkwOTN9.6rvGAgX-83gbOrrunrGpodZKECsJcbbeHYWqdkDDD2I
+Authorization: Bearer TU_TOKEN
 
 {
   "client_id": 1,
@@ -47,24 +49,24 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiO
 
 ###
 
-### 2. Listar órdenes
+### 6. Listar órdenes
 GET http://localhost:3000/api/orders
 Content-Type: application/json
 Authorization: Bearer TU_TOKEN
 
 ###
 
-### 3. Ver detalle de la orden 1
+### 7. Ver detalle de la orden 1
 GET http://localhost:3000/api/orders/1
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJtYXJjb3NAZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzc5MzMwMjkzLCJleHAiOjE3NzkzNTkwOTN9.6rvGAgX-83gbOrrunrGpodZKECsJcbbeHYWqdkDDD2I
+Authorization: Bearer TU_TOKEN
 
 ###
 
-### 4. Actualizar orden
+### 8. Actualizar orden
 PUT http://localhost:3000/api/orders/1
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJtYXJjb3NAZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzc5MzMwMjkzLCJleHAiOjE3NzkzNTkwOTN9.6rvGAgX-83gbOrrunrGpodZKECsJcbbeHYWqdkDDD2I
+Authorization: Bearer TU_TOKEN
 
 {
   "diagnosis": "Fuente de poder dañada",
@@ -75,19 +77,21 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiO
 
 ###
 
-### 5. Cambiar estado
+### 9. Cambiar estado
 PATCH http://localhost:3000/api/orders/1/status
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJtYXJjb3NAZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzc5MzMwMjkzLCJleHAiOjE3NzkzNTkwOTN9.6rvGAgX-83gbOrrunrGpodZKECsJcbbeHYWqdkDDD2I
+Authorization: Bearer TU_TOKEN
 
 {
   "status": "en_progreso"
 }
 
-### Guardar firma y generar PDF
+###
+
+### 10. Guardar firma y generar PDF
 POST http://localhost:3000/api/orders/1/signature
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJtYXJjb3NAZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzc5MzMwMjkzLCJleHAiOjE3NzkzNTkwOTN9.6rvGAgX-83gbOrrunrGpodZKECsJcbbeHYWqdkDDD2I
+Authorization: Bearer TU_TOKEN
 
 {
   "signature_base64": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
@@ -95,14 +99,16 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiO
 
 ###
 
-### Descargar PDF
+### 11. Descargar PDF
 GET http://localhost:3000/api/orders/1/pdf
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJtYXJjb3NAZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzc5MzMwMjkzLCJleHAiOjE3NzkzNTkwOTN9.6rvGAgX-83gbOrrunrGpodZKECsJcbbeHYWqdkDDD2I
+Authorization: Bearer TU_TOKEN
 
-### Guardar firma (genera PDF y envía correo)
+###
+
+### 12. Guardar firma (genera PDF y envía correo)
 POST http://localhost:3000/api/orders/1/signature
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJtYXJjb3NAZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzc5MzMwMjkzLCJleHAiOjE3NzkzNTkwOTN9.6rvGAgX-83gbOrrunrGpodZKECsJcbbeHYWqdkDDD2I
+Authorization: Bearer TU_TOKEN
 
 {
   "signature_base64": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="

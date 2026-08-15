@@ -11,7 +11,7 @@ function renderSidebar(activePage) {
 
   // Links según rol
   if (user.role === 'admin') {
-    links += `     
+    links += `
       <a href="users.html" class="${activePage === 'users' ? 'active' : ''}"><i class="fa-solid fa-users"></i> Usuarios</a>
     `;
   } else if (user.role === 'cliente') {
@@ -21,10 +21,23 @@ function renderSidebar(activePage) {
   }
 
   return `
-    <div class="sidebar">
+    <div class="mobile-header">
+      <div class="mobile-header__brand">
+        <img src="https://res.cloudinary.com/ztbcsp9h/image/upload/gpanel-web/gpanel-logo-light.png" alt="GPanel" class="mobile-header__logo">
+        
+      </div>
+      <button class="menu-toggle" type="button" data-menu-toggle aria-label="Abrir menú de navegación" title="Abrir menú">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+    </div>
+
+    <aside class="sidebar">
       <div class="sidebar-header">
         <img src="https://res.cloudinary.com/ztbcsp9h/image/upload/gpanel-web/gpanel-logo-light.png" alt="GPanel" class="sidebar-header__logo">
         <p>${user.name} (${user.role})</p>
+        <button class="sidebar-close" type="button" data-menu-close aria-label="Cerrar menú" title="Cerrar">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
       </div>
       <nav class="sidebar-nav">
         ${links}
@@ -32,6 +45,25 @@ function renderSidebar(activePage) {
       <div class="sidebar-footer">
         <button onclick="logout()">Cerrar sesión</button>
       </div>
-    </div>
+    </aside>
   `;
 }
+
+// ─── Menú hamburguesa (solo móvil) ───────────────────────────
+function toggleMenu(force) {
+  const sidebar = document.querySelector('.sidebar');
+  if (!sidebar) return;
+  const open = typeof force === 'boolean' ? force : !sidebar.classList.contains('is-open');
+  sidebar.classList.toggle('is-open', open);
+  document.body.classList.toggle('menu-open', open);
+}
+
+document.addEventListener('click', (e) => {
+  if (e.target.closest('[data-menu-toggle]')) return toggleMenu();
+  if (e.target.closest('[data-menu-close]')) return toggleMenu(false);
+  if (e.target.closest('.sidebar-nav a')) toggleMenu(false);
+});
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') toggleMenu(false);
+});

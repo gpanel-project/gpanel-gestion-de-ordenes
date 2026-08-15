@@ -28,7 +28,6 @@
     <div class="main-content">
       <div class="page-header">
         <h1 id="orderTitle">Orden de Servicio</h1>
-        <a href="orders-list.html" class="btn btn-primary btn-sm">Volver</a>
         <button class="sidebar-theme-btn" data-theme-toggle aria-label="Cambiar a modo oscuro" title="Modo oscuro">
           <i class="fa-solid fa-moon"></i>
         </button>
@@ -44,6 +43,7 @@
           <div><span class="detail-label">Fecha</span><div id="createdAt">-</div></div>
           <div><span class="detail-label">Costo total</span><div id="totalCost">-</div></div>
         </div>
+        <a href="orders-list.html" class="btn btn-primary btn-sm" style="margin-top:20px">Volver</a>
       </div>
       <div class="detail-card" data-reveal>
         <h3>Descripcion del problema</h3>
@@ -76,6 +76,9 @@
               <option value="completada">Completada</option>
               <option value="cancelada">Cancelada</option>
             </select>
+            <small class="form-hint" id="statusLockedHint" style="display:none; color:#ef4444;">
+              Esta orden está completada y no puede cambiar de estado.
+            </small>
           </div>
           <button type="submit" class="btn btn-primary" style="width:auto;padding:10px 25px">Guardar cambios</button>
         </form>

@@ -267,6 +267,25 @@ html[data-theme="dark"] .login-card h1 {
   }
 }
 
+@media (max-width: 480px) {
+  .login-container {
+    padding: 16px;
+  }
+
+  .login-card {
+    padding: 30px 20px;
+    border-radius: 16px;
+  }
+
+  .login-card h1 {
+    font-size: 19px;
+  }
+
+  .login-card__logo {
+    max-height: 160px;
+  }
+}
+
 /* ── Respeto a prefers-reduced-motion ─────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   .eyebrow-dot,

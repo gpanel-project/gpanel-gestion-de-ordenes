@@ -1,5 +1,4 @@
 const { Resend } = require('resend');
-const fs = require('fs');
 require('dotenv').config();
 
 const resend = new Resend(process.env.RESEND_API_KEY);
@@ -115,52 +114,7 @@ const sendOrderEmail = async (order, pdfUrl) => {
   }
 };
 
-// ── 2. Autenticación: Correo de Bienvenida (Estructura preparada) ─
-const sendWelcomeEmail = async (user) => {
-  try {
-    const response = await resend.emails.send({
-      from: FROM_EMAIL,
-      to: [user.email],
-      subject: '¡Bienvenido a GPanel!',
-      html: `
-        <div style="font-family: Arial, sans-serif; padding: 20px;">
-          <h2>¡Hola ${user.name}!</h2>
-          <p>Tu cuenta en <strong>GPanel - Gestión de Órdenes</strong> ha sido creada exitosamente.</p>
-          <p>Rol asignado: <strong>${user.role}</strong></p>
-        </div>
-      `
-    });
-    return response;
-  } catch (error) {
-    console.error('❌ Error enviando correo de bienvenida:', error.message);
-  }
-};
-
-// ── 3. Facturación: Envío de Factura (Estructura preparada) ──────
-const sendInvoiceEmail = async (invoice, pdfPath) => {
-  try {
-    const attachments = [];
-    if (pdfPath && fs.existsSync(pdfPath)) {
-      attachments.push({
-        filename: `factura-${invoice.number}.pdf`,
-        content: fs.readFileSync(pdfPath)
-      });
-    }
-
-    const response = await resend.emails.send({
-      from: FROM_EMAIL,
-      to: [invoice.client_email],
-      subject: `Factura ${invoice.number} - GPanel`,
-      html: `<p>Estimado cliente, adjuntamos su factura N° ${invoice.number}.</p>`,
-      attachments
-    });
-    return response;
-  } catch (error) {
-    console.error('❌ Error enviando factura:', error.message);
-  }
-};
-
-// ── 4. Autenticación: Correo de Verificación de Cuenta ───────────
+// ── 2. Autenticación: Correo de Verificación de Cuenta ───────────
 const sendVerificationEmail = async (email, name, code) => {
   try {
     const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5500';
@@ -220,7 +174,5 @@ const sendVerificationEmail = async (email, name, code) => {
 
 module.exports = {
   sendOrderEmail,
-  sendWelcomeEmail,
-  sendInvoiceEmail,
   sendVerificationEmail
 };
