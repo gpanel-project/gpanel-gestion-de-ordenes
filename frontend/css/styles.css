@@ -451,14 +451,14 @@ html[data-theme="dark"] .form-hint {
 .btn-create {
   display: inline-flex;
   width: auto;
-  max-width: 100%;
+  max-width: 20%;
   white-space: nowrap;
   margin-bottom: 20px;
 }
 
-@media (max-width:480px) {
+@media (max-width: 1255px) {
   .btn-create {
-    width: 100%;
+    max-width: 100%;
     justify-content: center;
   }
 }
