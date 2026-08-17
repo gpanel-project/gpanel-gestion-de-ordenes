@@ -3,9 +3,10 @@ function renderSidebar(activePage) {
   const user = JSON.parse(localStorage.getItem('user'));
   if (!user) return '';
 
-  // Links visibles para todos
+  // Links visibles para todos (el dashboard del cliente es una página aparte)
+  const dashboardHref = user.role === 'cliente' ? 'client-dashboard.html' : 'dashboard.html';
   let links = `
-    <a href="dashboard.html" class="${activePage === 'dashboard' ? 'active' : ''}"><i class="fa-solid fa-square-poll-vertical"></i> Dashboard</a>
+    <a href="${dashboardHref}" class="${activePage === 'dashboard' ? 'active' : ''}"><i class="fa-solid fa-square-poll-vertical"></i> Dashboard</a>
     <a href="orders-list.html" class="${activePage === 'orders' ? 'active' : ''}"><i class="fa-solid fa-clipboard"></i> Órdenes</a>
   `;
 

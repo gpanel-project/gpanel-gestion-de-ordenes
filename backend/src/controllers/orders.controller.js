@@ -2,10 +2,32 @@
   const { sendOrderEmail } = require('../services/email.service');
 
   // ─── CREAR ORDEN ──────────────────────────────────────────
+  // Admin: crea la orden a nombre de cualquier cliente y asigna técnico.
+  // Cliente: crea su propia orden (queda sin técnico asignado, a la espera
+  // de que el admin la asigne). Técnico: no puede crear órdenes.
   const createOrder = async (req, res) => {
-    const { client_id, technician_id, description } = req.body;
+    if (req.user.role === 'tecnico') {
+      return res.status(403).json({ error: 'Los técnicos no pueden crear órdenes' });
+    }
 
-    if (!client_id || !technician_id || !description) {
+    let { client_id, technician_id, description } = req.body;
+    technician_id = technician_id || null;
+
+    if (req.user.role === 'cliente') {
+      // Ignoramos cualquier client_id enviado por el cliente y lo resolvemos
+      // a partir de su propio usuario, para que no pueda crear a nombre de otro.
+      const [clientRow] = await db.query('SELECT id FROM clients WHERE user_id = ?', [req.user.id]);
+      if (clientRow.length === 0) {
+        return res.status(400).json({ error: 'Tu usuario no tiene un perfil de cliente asociado. Contacta al administrador.' });
+      }
+      client_id = clientRow[0].id;
+      technician_id = null; // el admin lo asigna después
+    }
+
+    if (!client_id || !description) {
+      return res.status(400).json({ error: 'Cliente y descripción son obligatorios' });
+    }
+    if (req.user.role === 'admin' && !technician_id) {
       return res.status(400).json({ error: 'Cliente, técnico y descripción son obligatorios' });
     }
 
@@ -37,6 +59,37 @@
     }
   };
 
+  // ─── CANCELAR ORDEN (cliente cancela una orden propia PENDIENTE) ──
+  const cancelOrder = async (req, res) => {
+    const { id } = req.params;
+
+    try {
+      const [existing] = await db.query(
+        `SELECT so.id, so.status, c.user_id AS client_user_id
+         FROM service_orders so
+         JOIN clients c ON so.client_id = c.id
+         WHERE so.id = ?`,
+        [id]
+      );
+      if (existing.length === 0) {
+        return res.status(404).json({ error: 'Orden no encontrada' });
+      }
+
+      if (req.user.role === 'cliente' && existing[0].client_user_id !== req.user.id) {
+        return res.status(403).json({ error: 'No puedes cancelar una orden que no es tuya' });
+      }
+
+      if (existing[0].status !== 'pendiente') {
+        return res.status(400).json({ error: 'Solo se pueden cancelar órdenes en estado PENDIENTE' });
+      }
+
+      await db.query('UPDATE service_orders SET status = ? WHERE id = ?', ['cancelada', id]);
+      res.json({ mensaje: 'Orden cancelada exitosamente' });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  };
+
   // ─── LISTAR ÓRDENES ───────────────────────────────────────
   const getOrders = async (req, res) => {
     try {
@@ -54,7 +107,7 @@
             u.name  AS technician_name
           FROM service_orders so
           JOIN clients c ON so.client_id = c.id
-          JOIN users u   ON so.technician_id = u.id
+          LEFT JOIN users u ON so.technician_id = u.id
           ORDER BY so.created_at DESC
         `;
       } else if (req.user.role === 'tecnico') {
@@ -68,7 +121,7 @@
             u.name AS technician_name
           FROM service_orders so
           JOIN clients c ON so.client_id = c.id
-          JOIN users u   ON so.technician_id = u.id
+          LEFT JOIN users u ON so.technician_id = u.id
           WHERE so.technician_id = ?
           ORDER BY so.created_at DESC
         `;
@@ -84,7 +137,7 @@
             u.name AS technician_name
           FROM service_orders so
           JOIN clients c ON so.client_id = c.id
-          JOIN users u   ON so.technician_id = u.id
+          LEFT JOIN users u ON so.technician_id = u.id
           WHERE c.user_id = ?
           ORDER BY so.created_at DESC
         `;
@@ -116,7 +169,7 @@
           cb.name       AS created_by_name
         FROM service_orders so
         JOIN clients c  ON so.client_id = c.id
-        JOIN users u    ON so.technician_id = u.id
+        LEFT JOIN users u ON so.technician_id = u.id
         JOIN users cb   ON so.created_by = cb.id
         WHERE so.id = ?`,
         [id]
@@ -267,7 +320,7 @@
           cb.name       AS created_by_name
         FROM service_orders so
         JOIN clients c  ON so.client_id = c.id
-        JOIN users u    ON so.technician_id = u.id
+        LEFT JOIN users u ON so.technician_id = u.id
         JOIN users cb   ON so.created_by = cb.id
         WHERE so.id = ?`,
         [id]
@@ -527,7 +580,7 @@
   };
 
   module.exports = {
-    createOrder, getOrders, getOrderById,
+    createOrder, getOrders, getOrderById, cancelOrder,
     updateOrder, updateOrderStatus, deleteOrder,
     saveSignature, downloadPDF, uploadOrderImage, getOrderImages,
     getStats, getDashboardStats                

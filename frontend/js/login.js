@@ -1,6 +1,11 @@
+// Redirige al dashboard correspondiente según el rol del usuario
+function dashboardForRole(user) {
+  return user && user.role === 'cliente' ? 'client-dashboard.html' : 'dashboard.html';
+}
+
 // Si ya hay sesión activa, redirige al dashboard
 if (localStorage.getItem('token')) {
-  window.location.href = 'dashboard.html';
+  window.location.href = dashboardForRole(JSON.parse(localStorage.getItem('user') || 'null'));
 }
 
 const loginForm = document.getElementById('loginForm');
@@ -48,7 +53,7 @@ loginForm.addEventListener('submit', async (e) => {
     localStorage.setItem('token', data.token);
     localStorage.setItem('user', JSON.stringify(data.user));
 
-    window.location.href = 'dashboard.html';
+    window.location.href = dashboardForRole(data.user);
 
   } catch (error) {
     showAlert(error.message);

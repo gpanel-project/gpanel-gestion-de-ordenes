@@ -71,6 +71,14 @@ const initDb = async () => {
       ADD COLUMN IF NOT EXISTS pdf_public_id TEXT;
     `);
     console.log('✅ Columna pdf_public_id asegurada en service_orders');
+
+    // El técnico ahora puede asignarse después: permitimos que quede
+    // nulo cuando un cliente crea su propia orden (queda "sin asignar")
+    await pool.query(`
+      ALTER TABLE service_orders
+      ALTER COLUMN technician_id DROP NOT NULL;
+    `);
+    console.log('✅ technician_id ahora es opcional en service_orders');
   } catch (err) {
     console.error('❌ Error inicializando tablas en PostgreSQL:', err.message);
   }

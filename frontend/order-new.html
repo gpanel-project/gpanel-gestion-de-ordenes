@@ -1,0 +1,66 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nueva Orden - Gestion de Mantenimiento</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+<body>
+  <div class="bg-decoration" aria-hidden="true">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+    <div class="blob blob-4"></div>
+  </div>
+
+  <div class="app-container" id="appContainer">
+    <div class="main-content">
+      <div class="page-header">
+        <div>
+          <h1>Nueva Orden de Servicio</h1>
+          <p class="page-subtitle">Cuéntanos qué necesitas y un técnico será asignado a tu orden</p>
+        </div>
+        <button class="sidebar-theme-btn" data-theme-toggle aria-label="Cambiar a modo oscuro" title="Modo oscuro">
+          <i class="fa-solid fa-moon"></i>
+        </button>
+      </div>
+
+      <div class="detail-card" data-reveal style="border-radius:var(--radius); padding:28px; max-width:640px;">
+        <div class="alert alert-error" id="errorAlert"></div>
+        <div class="alert alert-success" id="successAlert"></div>
+
+        <form id="newOrderForm">
+          <div class="form-group">
+            <label for="description">Descripción del problema o servicio</label>
+            <textarea id="description" name="description" required minlength="10"
+              placeholder="Ej: La impresora HP del área de recepción no imprime, muestra error de atasco de papel."></textarea>
+            <span class="form-hint">Sé lo más específico posible: equipo, marca, y qué está fallando.</span>
+          </div>
+
+          <button type="submit" class="btn btn-secondary" id="submitBtn">
+            <i class="fa-solid fa-paper-plane"></i> Generar Orden
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/theme.js"></script>
+  <script src="js/sidebar.js"></script>
+  <script src="js/order-new.js"></script>
+  <script src="js/effects.js"></script>
+  <script src="js/footer.js"></script>
+</body>
+
+</html>

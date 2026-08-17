@@ -2,15 +2,15 @@ const express = require('express');
 const router = express.Router();
 const { verifyToken, verifyAdmin, verifyAdminOrTecnico } = require('../middlewares/auth.middleware');
 const {
-  createOrder, getOrders, getOrderById,
+  createOrder, getOrders, getOrderById, cancelOrder,
   updateOrder, updateOrderStatus, deleteOrder,
   saveSignature, downloadPDF, uploadOrderImage, getOrderImages,
   getStats, getDashboardStats                    
 } = require('../controllers/orders.controller');
 const upload = require('../middlewares/upload.middleware');
 
-// Crear orden → solo admin
-router.post('/', verifyToken, verifyAdmin, createOrder);
+// Crear orden → admin (a nombre de cualquier cliente) o cliente (la suya propia)
+router.post('/', verifyToken, createOrder);
 
 // Listar órdenes → todos los roles ven las suyas
 router.get('/', verifyToken, getOrders);
@@ -28,6 +28,9 @@ router.put('/:id', verifyToken, verifyAdminOrTecnico, updateOrder);
 
 // Cambiar estado → admin o tecnico
 router.patch('/:id/status', verifyToken, verifyAdminOrTecnico, updateOrderStatus);
+
+// Cancelar → cliente (la suya, si sigue pendiente) o admin
+router.patch('/:id/cancel', verifyToken, cancelOrder);
 
 // Eliminar → solo admin
 router.delete('/:id', verifyToken, verifyAdmin, deleteOrder);

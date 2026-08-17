@@ -1,0 +1,124 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mi Panel - Gestion de Mantenimiento</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+<body>
+  <div class="bg-decoration" aria-hidden="true">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+    <div class="blob blob-4"></div>
+  </div>
+
+  <div class="app-container" id="appContainer">
+    <div class="main-content">
+      <div class="page-header">
+        <div>
+          <h1>Bienvenido</h1>
+          <p class="page-subtitle" id="welcomeMsg">Aquí puedes ver y gestionar tus órdenes de servicio</p>
+        </div>
+        <button class="sidebar-theme-btn" data-theme-toggle aria-label="Cambiar a modo oscuro" title="Modo oscuro">
+          <i class="fa-solid fa-moon"></i>
+        </button>
+      </div>
+
+      <div class="stats-grid" id="statsGrid" data-reveal></div>
+
+      <div class="page-header" style="margin-bottom:16px;">
+        <div>
+          <h1 style="font-size:19px;">Mis Órdenes de Servicio</h1>
+        </div>
+        <a href="order-new.html" class="btn btn-secondary btn-create">
+          <i class="fa-solid fa-plus"></i> Nueva Orden
+        </a>
+      </div>
+
+      <div class="table-container" data-reveal>
+        <table>
+          <thead>
+            <tr>
+              <th>Orden</th>
+              <th>Descripción</th>
+              <th>Técnico asignado</th>
+              <th>Estado</th>
+              <th>Fecha</th>
+              <th>Observaciones</th>
+            </tr>
+          </thead>
+          <tbody id="ordersTable">
+            <tr><td colspan="6" style="text-align:center;padding:30px">Cargando órdenes...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── Botón flotante de ayuda ─────────────────────────── -->
+  <button class="help-fab" type="button" id="helpFab" aria-label="Ayuda" title="¿Necesitas ayuda?">
+    <i class="fa-solid fa-headset"></i>
+  </button>
+
+  <div class="modal-overlay help-modal" id="helpModal" style="display:none;">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-circle-question"></i> ¿Necesitas ayuda?</h3>
+        <button class="modal-close" type="button" id="helpModalClose">&times;</button>
+      </div>
+
+      <div class="help-option">
+        <i class="fa-solid fa-plus"></i>
+        <div>
+          <strong>Generar una orden</strong>
+          <span>Ve a "Nueva Orden" y describe el problema o servicio que necesitas.</span>
+        </div>
+      </div>
+      <div class="help-option">
+        <i class="fa-solid fa-ban"></i>
+        <div>
+          <strong>Cancelar una orden</strong>
+          <span>Solo puedes cancelar órdenes que aún estén en estado "Pendiente".</span>
+        </div>
+      </div>
+      <div class="help-option" id="helpWhatsapp" style="cursor:pointer;">
+        <i class="fa-brands fa-whatsapp"></i>
+        <div>
+          <strong>Escríbenos por WhatsApp</strong>
+          <span>Soporte directo con nuestro equipo</span>
+        </div>
+      </div>
+      <div class="help-option" id="helpEmail" style="cursor:pointer;">
+        <i class="fa-solid fa-envelope"></i>
+        <div>
+          <strong>Escríbenos por correo</strong>
+          <span>Te respondemos lo antes posible</span>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn btn-cancel" type="button" id="helpModalCloseBtn">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/theme.js"></script>
+  <script src="js/sidebar.js"></script>
+  <script src="js/client-dashboard.js"></script>
+  <script src="js/effects.js"></script>
+  <script src="js/footer.js"></script>
+</body>
+
+</html>

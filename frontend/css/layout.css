@@ -112,6 +112,8 @@
   flex: 1;
   min-width: 0;
   padding: 32px;
+  display: flex;
+  flex-direction: column;
   position: relative;
   z-index: 1;
 }
@@ -762,6 +764,90 @@ html[data-theme="dark"] .badge-cliente {
 }
 
 /* =============================================================
+   6c. Botón flotante de ayuda + panel del cliente
+   ============================================================= */
+.help-fab {
+  position: fixed;
+  right: 28px;
+  bottom: 28px;
+  z-index: 900;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  color: #fff;
+  background: linear-gradient(135deg, var(--accent), var(--accent-soft));
+  box-shadow: 0 8px 24px var(--accent-glow);
+  transition: transform 0.3s var(--ease-out), box-shadow 0.3s var(--ease-out);
+}
+
+.help-fab:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 12px 32px var(--accent-glow);
+}
+
+@media (max-width:768px) {
+  .help-fab {
+    right: 18px;
+    bottom: 18px;
+    width: 50px;
+    height: 50px;
+  }
+}
+
+.help-modal .modal-card { max-width: 420px; }
+
+.help-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  margin-bottom: 10px;
+  transition: all 0.2s var(--ease-out);
+}
+
+.help-option:hover {
+  border-color: var(--accent);
+  background: var(--accent-glow);
+  transform: translateY(-1px);
+}
+
+.help-option i {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--navy);
+  color: #fff;
+  font-size: 14px;
+}
+
+.help-option div strong { display: block; font-size: 13.5px; color: var(--ink); }
+.help-option div span { font-size: 12px; color: var(--navy); }
+
+/* ── Orden: técnico asignado / sin asignar ── */
+.tech-unassigned {
+  color: var(--ink-mute);
+  font-style: italic;
+  font-size: 13px;
+}
+
+.order-desc-cell {
+  max-width: 260px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* =============================================================
    7. Barra superior móvil + botón hamburguesa
    (Solo visible en pantallas <= 768px, oculta en desktop)
    ============================================================= */
@@ -771,8 +857,8 @@ html[data-theme="dark"] .badge-cliente {
 
 /* ── Pie de página (inyectado por js/footer.js) ─────────── */
 .app-footer {
-  margin-top: 40px;
-  padding-top: 20px;
+  margin-top: auto;
+  padding: 12px 20px;
   border-top: 1px solid var(--line);
   display: flex;
   align-items: center;
