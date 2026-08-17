@@ -219,7 +219,7 @@
     const { id } = req.params;
     const { status } = req.body;
 
-    const validStatuses = ['pendiente', 'en_progreso', 'completada', 'cancelada'];
+    const validStatuses = ['pendiente', 'en_progreso', 'atendida', 'completada', 'cancelada'];
     if (!validStatuses.includes(status)) {
       return res.status(400).json({ error: 'Estado inválido' });
     }
@@ -230,14 +230,25 @@
         return res.status(404).json({ error: 'Orden no encontrada' });
       }
 
-      // Las órdenes completadas quedan bloqueadas: no cambian de estado
-      if (existing[0].status === 'completada') {
-        return res.status(400).json({ error: 'Las órdenes completadas no pueden cambiar de estado' });
+      // Las órdenes completadas o canceladas quedan bloqueadas
+      if (['completada', 'cancelada'].includes(existing[0].status)) {
+        return res.status(400).json({ error: 'Esta orden está cerrada y no puede cambiar de estado' });
+      }
+
+      // Las órdenes atendidas esperan firma del cliente, no pueden cambiar de estado
+      if (existing[0].status === 'atendida') {
+        return res.status(400).json({ error: 'La orden está atendida, esperando firma del cliente' });
       }
 
       // Un técnico solo puede cambiar el estado de sus propias órdenes
-      if (req.user.role === 'tecnico' && existing[0].technician_id !== req.user.id) {
-        return res.status(403).json({ error: 'No puedes cambiar el estado de una orden que no te fue asignada' });
+      if (req.user.role === 'tecnico') {
+        if (existing[0].technician_id !== req.user.id) {
+          return res.status(403).json({ error: 'No puedes cambiar el estado de una orden que no te fue asignada' });
+        }
+        // Técnico solo puede pasar de en_progreso → atendida
+        if (existing[0].status !== 'en_progreso' || status !== 'atendida') {
+          return res.status(400).json({ error: 'El técnico solo puede marcar una orden EN PROGRESO como ATENDIDA' });
+        }
       }
 
       await db.query('UPDATE service_orders SET status = ? WHERE id = ?', [status, id]);
@@ -247,22 +258,71 @@
     }
   };
 
-  // ─── ELIMINAR ORDEN (solo órdenes COMPLETADA) ──────────────
+  // ─── ASIGNAR TÉCNICO A UNA ORDEN (solo admin) ──────────────
+  const assignTechnician = async (req, res) => {
+    const { id } = req.params;
+    const { technician_id } = req.body;
+
+    if (!technician_id) {
+      return res.status(400).json({ error: 'Debe seleccionar un técnico' });
+    }
+
+    try {
+      const [existing] = await db.query(
+        'SELECT id, status FROM service_orders WHERE id = ?', [id]
+      );
+      if (existing.length === 0) {
+        return res.status(404).json({ error: 'Orden no encontrada' });
+      }
+
+      if (existing[0].status !== 'pendiente') {
+        return res.status(400).json({ error: 'Solo se pueden asignar técnicos a órdenes en estado PENDIENTE' });
+      }
+
+      await db.query(
+        'UPDATE service_orders SET technician_id = ?, status = \'en_progreso\' WHERE id = ?',
+        [technician_id, id]
+      );
+
+      res.json({ mensaje: 'Técnico asignado y orden puesta en progreso' });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  };
+
+  // ─── LISTAR TÉCNICOS DISPONIBLES ──────────────────────────
+  const getTechnicians = async (req, res) => {
+    try {
+      const [techs] = await db.query(
+        "SELECT id, name, email FROM users WHERE role = 'tecnico' AND active = true ORDER BY name"
+      );
+      res.json(techs);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  };
+
+  // ─── ELIMINAR ORDEN (admin o técnico, solo COMPLETADA o CANCELADA) ──
   const deleteOrder = async (req, res) => {
     const { id } = req.params;
 
     try {
       const [existing] = await db.query(
-        'SELECT id, status, pdf_public_id FROM service_orders WHERE id = ?',
+        'SELECT id, status, technician_id, pdf_public_id FROM service_orders WHERE id = ?',
         [id]
       );
       if (existing.length === 0) {
         return res.status(404).json({ error: 'Orden no encontrada' });
       }
 
-      // Solo las órdenes completadas pueden eliminarse
-      if (existing[0].status !== 'completada') {
-        return res.status(400).json({ error: 'Solo las órdenes en estado COMPLETADA pueden eliminarse' });
+      // Solo las órdenes completadas o canceladas pueden eliminarse
+      if (!['completada', 'cancelada'].includes(existing[0].status)) {
+        return res.status(400).json({ error: 'Solo las órdenes en estado COMPLETADA o CANCELADA pueden eliminarse' });
+      }
+
+      // El técnico solo puede eliminar sus propias órdenes
+      if (req.user.role === 'tecnico' && existing[0].technician_id !== req.user.id) {
+        return res.status(403).json({ error: 'No puedes eliminar una orden que no te fue asignada' });
       }
 
       // 1. Limpiamos adjuntos de Cloudinary (best effort, no bloquea el borrado)
@@ -332,9 +392,28 @@
 
       const order = orders[0];
 
-      // 1b. Un técnico solo puede firmar las órdenes que le fueron asignadas
-      if (req.user.role === 'tecnico' && order.technician_id !== req.user.id) {
-        return res.status(403).json({ error: 'No puedes firmar una orden que no te fue asignada' });
+      // 1b. Solo el cliente dueño de la orden puede firmar
+      if (req.user.role !== 'cliente') {
+        return res.status(403).json({ error: 'Solo el cliente puede firmar la orden' });
+      }
+
+      // 1c. La orden debe estar en estado 'atendida' para poder firmarla
+      if (order.status !== 'atendida') {
+        return res.status(400).json({ error: 'La orden debe estar en estado ATENDIDA para poder firmarla' });
+      }
+
+      // 1d. Validamos que el cliente autenticado sea el dueño de la orden
+      const [clientRow] = await db.query(
+        'SELECT id FROM clients WHERE user_id = ? AND id = ?',
+        [req.user.id, order.client_id]
+      );
+      if (clientRow.length === 0) {
+        return res.status(403).json({ error: 'No puedes firmar una orden que no es tuya' });
+      }
+
+      // 1c. La orden debe estar en estado 'atendida' para poder firmarla
+      if (order.status !== 'atendida') {
+        return res.status(400).json({ error: 'La orden debe estar en estado ATENDIDA para poder firmarla' });
       }
 
       // 2. Guardamos la firma en la BD
@@ -508,6 +587,7 @@
           COUNT(*) as total,
           SUM(CASE WHEN status = 'pendiente' THEN 1 ELSE 0 END) as pendientes,
           SUM(CASE WHEN status = 'en_progreso' THEN 1 ELSE 0 END) as en_progreso,
+          SUM(CASE WHEN status = 'atendida' THEN 1 ELSE 0 END) as atendidas,
           SUM(CASE WHEN status = 'completada' THEN 1 ELSE 0 END) as completadas,
           SUM(CASE WHEN status = 'cancelada' THEN 1 ELSE 0 END) as canceladas
         FROM service_orders ${whereClause}`,
@@ -583,5 +663,6 @@
     createOrder, getOrders, getOrderById, cancelOrder,
     updateOrder, updateOrderStatus, deleteOrder,
     saveSignature, downloadPDF, uploadOrderImage, getOrderImages,
-    getStats, getDashboardStats                
+    getStats, getDashboardStats,
+    assignTechnician, getTechnicians
   };

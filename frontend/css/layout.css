@@ -433,6 +433,10 @@ html[data-theme="dark"] .page-header .sidebar-theme-btn:hover {
   background: rgba(239, 68, 68, 0.16);
 }
 
+.stat-card.atendida .stat-card__icon {
+  background: rgba(99, 102, 241, 0.16);
+}
+
 .stat-card.total .stat-card__icon {
   background: rgba(26, 60, 94, 0.14);
 }

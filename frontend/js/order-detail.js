@@ -6,7 +6,6 @@ document.getElementById('appContainer').insertAdjacentHTML(
 );
 
 // ─── Obtenemos el ID de la orden desde la URL ──────────────
-// Ejemplo: order-detail.html?id=3  →  orderId = 3
 const params = new URLSearchParams(window.location.search);
 const orderId = params.get('id');
 
@@ -32,7 +31,8 @@ function renderOrder(order) {
   document.getElementById('orderTitle').textContent = `Orden ${order.order_number}`;
   document.getElementById('clientName').textContent = order.client_name;
   document.getElementById('clientCompany').textContent = order.client_company || 'N/A';
-  document.getElementById('technicianName').textContent = order.technician_name;
+  document.getElementById('clientAddress').textContent = order.client_address || 'N/A';
+  document.getElementById('technicianName').textContent = order.technician_name || 'Sin asignar';
   document.getElementById('createdAt').textContent = new Date(order.created_at).toLocaleString('es-CO');
   document.getElementById('totalCost').textContent = `$${Number(order.total_cost || 0).toLocaleString('es-CO')}`;
   document.getElementById('description').textContent = order.description || 'N/A';
@@ -40,31 +40,78 @@ function renderOrder(order) {
   document.getElementById('orderStatus').innerHTML =
     `<span class="badge badge-${order.status}">${order.status.replace('_', ' ')}</span>`;
 
-  // Llenamos el formulario de edición
+  // ── Llenamos el formulario de edición ──────────────────
   document.getElementById('diagnosis').value = order.diagnosis || '';
   document.getElementById('work_done').value = order.work_done || '';
   document.getElementById('parts_used').value = order.parts_used || '';
   document.getElementById('total_cost').value = order.total_cost || 0;
   document.getElementById('statusSelect').value = order.status;
 
-  // ── Solo admin y técnico pueden editar ──────────────────
-  if (user.role === 'cliente') {
-    document.getElementById('editSection').style.display = 'none';
-  }
-
-  // ── Órdenes completadas: el estado queda bloqueado ──────
+  // ── VISIBILIDAD SEGÚN ROL ──────────────────────────────
+  const editSection = document.getElementById('editSection');
+  const signatureSection = document.getElementById('signatureSection');
+  const assignSection = document.getElementById('assignSection');
   const statusSelect = document.getElementById('statusSelect');
   const statusLockedHint = document.getElementById('statusLockedHint');
-  if (order.status === 'completada') {
+
+  // Resetear opciones del select de estado
+  Array.from(statusSelect.options).forEach(opt => { opt.hidden = false; opt.disabled = false; });
+
+  if (user.role === 'admin') {
+    // Admin: solo visualiza, NO edita ni firma
+    editSection.style.display = 'none';
+    signatureSection.style.display = 'none';
+
+    // Admin puede asignar técnico solo si la orden está pendiente
+    if (order.status === 'pendiente') {
+      assignSection.style.display = 'block';
+      loadTechnicians();
+    } else {
+      assignSection.style.display = 'none';
+    }
+
+    // Admin no cambia estados, deshabilitamos el select
     statusSelect.disabled = true;
-    if (statusLockedHint) statusLockedHint.style.display = 'block';
-  } else {
-    statusSelect.disabled = false;
-    if (statusLockedHint) statusLockedHint.style.display = 'none';
+  } else if (user.role === 'cliente') {
+    // Cliente: solo visualiza
+    editSection.style.display = 'none';
+    assignSection.style.display = 'none';
+    statusSelect.disabled = true;
+
+    // Cliente firma solo si la orden está atendida y no tiene firma aún
+    if (order.status === 'atendida' && !order.signature_base64) {
+      signatureSection.style.display = 'block';
+    } else {
+      signatureSection.style.display = 'none';
+    }
+  } else if (user.role === 'tecnico') {
+    // Técnico: solo puede editar (no firma)
+    assignSection.style.display = 'none';
+    signatureSection.style.display = 'none';
+
+    // Técnico edita solo sus órdenes asignadas y solo si está EN PROGRESO
+    if (order.technician_id === user.id && order.status === 'en_progreso') {
+      editSection.style.display = 'block';
+      statusSelect.disabled = false;
+
+      // Técnico solo puede cambiar a "atendida"
+      Array.from(statusSelect.options).forEach(opt => {
+        if (opt.value !== 'atendida') {
+          opt.hidden = true;
+          opt.disabled = true;
+        }
+      });
+      statusSelect.value = 'atendida';
+
+      if (statusLockedHint) statusLockedHint.style.display = 'none';
+    } else {
+      editSection.style.display = 'none';
+    }
   }
 
   // ── Si ya tiene firma, la mostramos ─────────────────────
   if (order.signature_base64) {
+    signatureSection.style.display = 'block';
     document.getElementById('signatureDisplay').style.display = 'block';
     document.getElementById('signaturePadContainer').style.display = 'none';
     document.getElementById('signatureImg').src = order.signature_base64;
@@ -77,6 +124,38 @@ function renderOrder(order) {
     document.getElementById('pdfSection').style.display = 'block';
   }
 }
+
+// ─── Cargar técnicos disponibles (solo admin) ──────────────
+async function loadTechnicians() {
+  try {
+    const techs = await apiRequest('/orders/technicians/list');
+    const select = document.getElementById('technicianSelect');
+    select.innerHTML = '<option value="">-- Seleccionar tecnico --</option>';
+    techs.forEach(tech => {
+      select.innerHTML += `<option value="${tech.id}">${tech.name} (${tech.email})</option>`;
+    });
+  } catch (error) {
+    console.error('Error cargando técnicos:', error);
+  }
+}
+
+// ─── Asignar técnico a la orden (solo admin) ───────────────
+document.getElementById('assignForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const techId = document.getElementById('technicianSelect').value;
+  if (!techId) {
+    alert('Debe seleccionar un técnico');
+    return;
+  }
+
+  try {
+    await apiRequest(`/orders/${orderId}/assign`, 'PATCH', { technician_id: parseInt(techId) });
+    showAlert('✅ Técnico asignado exitosamente');
+    loadOrder();
+  } catch (error) {
+    alert('Error: ' + error.message);
+  }
+});
 
 // ─── Guardar cambios (diagnóstico, trabajo, costo, estado) ─
 document.getElementById('editForm').addEventListener('submit', async (e) => {
@@ -91,7 +170,7 @@ document.getElementById('editForm').addEventListener('submit', async (e) => {
       total_cost: document.getElementById('total_cost').value
     });
 
-    // 2. Actualizamos el estado (solo si cambió; en completadas queda bloqueado)
+    // 2. Actualizamos el estado (solo si cambió; en completadas/canceladas queda bloqueado)
     const newStatus = document.getElementById('statusSelect').value;
     if (newStatus !== currentOrder.status) {
       await apiRequest(`/orders/${orderId}/status`, 'PATCH', { status: newStatus });
@@ -108,7 +187,6 @@ document.getElementById('editForm').addEventListener('submit', async (e) => {
 // ─── Configuramos el pad de firma ───────────────────────────
 const canvas = document.getElementById('signatureCanvas');
 
-// Ajustamos el tamaño real del canvas al tamaño visual
 function resizeCanvas() {
   const ratio = Math.max(window.devicePixelRatio || 1, 1);
   canvas.width = canvas.offsetWidth * ratio;
@@ -139,7 +217,6 @@ document.getElementById('saveSignature').addEventListener('click', async () => {
   signatureBtn.disabled = true;
 
   try {
-    // Convertimos el dibujo a base64
     const signatureData = signaturePad.toDataURL('image/png');
 
     await apiRequest(`/orders/${orderId}/signature`, 'POST', {
@@ -175,7 +252,7 @@ document.getElementById('downloadPdfBtn').addEventListener('click', async () => 
   try {
     const token = localStorage.getItem('token');
 
-    const response = await fetch(`http://localhost:3000/api/orders/${orderId}/pdf`, {
+    const response = await fetch(`${API_URL}/orders/${orderId}/pdf`, {
       headers: {
         'Authorization': `Bearer ${token}`
       }
@@ -185,11 +262,9 @@ document.getElementById('downloadPdfBtn').addEventListener('click', async () => 
       throw new Error('No se pudo descargar el PDF');
     }
 
-    // Convertimos la respuesta en un archivo descargable
     const blob = await response.blob();
     const url = window.URL.createObjectURL(blob);
 
-    // Creamos un link temporal e invisible para forzar la descarga
     const a = document.createElement('a');
     a.href = url;
     a.download = `${currentOrder.order_number}.pdf`;
@@ -201,7 +276,7 @@ document.getElementById('downloadPdfBtn').addEventListener('click', async () => 
   } catch (error) {
     alert('Error: ' + error.message);
   } finally {
-    btn.textContent = '📄 Descargar PDF';
+    btn.textContent = 'Descargar PDF';
     btn.disabled = false;
   }
 });

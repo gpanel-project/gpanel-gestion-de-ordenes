@@ -7,9 +7,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap">
-  <link rel="stylesheet" href="css/styles.css">
-  <link rel="stylesheet" href="css/layout.css">
-  <link rel="stylesheet" href="css/order-detail.css">
+  <link rel="stylesheet" href="css/styles.css?v=2.0">
+  <link rel="stylesheet" href="css/layout.css?v=2.0">
+  <link rel="stylesheet" href="css/order-detail.css?v=2.0">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/signature_pad/4.1.5/signature_pad.umd.min.js"></script>
 </head>
@@ -35,6 +35,7 @@
         <div class="detail-grid">
           <div><span class="detail-label">Cliente</span><div id="clientName">-</div></div>
           <div><span class="detail-label">Empresa</span><div id="clientCompany">-</div></div>
+          <div><span class="detail-label">Direccion</span><div id="clientAddress">-</div></div>
           <div><span class="detail-label">Tecnico</span><div id="technicianName">-</div></div>
           <div><span class="detail-label">Estado</span><div id="orderStatus">-</div></div>
           <div><span class="detail-label">Fecha</span><div id="createdAt">-</div></div>
@@ -45,6 +46,18 @@
       <div class="detail-card" data-reveal>
         <h3>Descripcion del problema</h3>
         <p id="description">-</p>
+      </div>
+      <div class="detail-card" id="assignSection" style="display:none" data-reveal>
+        <h3>Asignar Tecnico</h3>
+        <form id="assignForm">
+          <div class="form-group">
+            <label>Tecnico disponible</label>
+            <select id="technicianSelect">
+              <option value="">-- Seleccionar tecnico --</option>
+            </select>
+          </div>
+          <button type="submit" class="btn btn-primary" style="width:auto;padding:10px 25px">Asignar tecnico</button>
+        </form>
       </div>
       <div class="detail-card" id="editSection" data-reveal>
         <h3>Detalles del trabajo</h3>
@@ -70,11 +83,12 @@
             <select id="statusSelect">
               <option value="pendiente">Pendiente</option>
               <option value="en_progreso">En progreso</option>
+              <option value="atendida">Atendida</option>
               <option value="completada">Completada</option>
               <option value="cancelada">Cancelada</option>
             </select>
             <small class="form-hint" id="statusLockedHint" style="display:none; color:#ef4444;">
-              Esta orden está completada y no puede cambiar de estado.
+              Esta orden esta cerrada y no puede cambiar de estado.
             </small>
           </div>
           <button type="submit" class="btn btn-primary" style="width:auto;padding:10px 25px">Guardar cambios</button>
@@ -101,12 +115,12 @@
       </div>
     </div>
   </div>
-  <script src="js/api.js"></script>
-  <script src="js/auth.js"></script>
-  <script src="js/theme.js"></script>
-  <script src="js/sidebar.js"></script>
-  <script src="js/order-detail.js"></script>
-  <script src="js/effects.js"></script>
-  <script src="js/footer.js"></script>
+  <script src="js/api.js?v=2.0"></script>
+  <script src="js/auth.js?v=2.0"></script>
+  <script src="js/theme.js?v=2.0"></script>
+  <script src="js/sidebar.js?v=2.0"></script>
+  <script src="js/order-detail.js?v=2.0"></script>
+  <script src="js/effects.js?v=2.0"></script>
+  <script src="js/footer.js?v=2.0"></script>
 </body>
 </html>

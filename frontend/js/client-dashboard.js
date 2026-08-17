@@ -1,8 +1,7 @@
 const user = checkAuth();
 
 if (user && user.role !== 'cliente') {
-  // Esta página es exclusiva del rol cliente; redirigimos al dashboard normal
-  window.location.href = 'client-dashboard.html';
+  window.location.href = 'dashboard.html';
 }
 
 document.getElementById('appContainer').insertAdjacentHTML('afterbegin', renderSidebar('dashboard'));
@@ -32,6 +31,10 @@ async function loadStats() {
         <div><div class="number">${stats.en_progreso || 0}</div><div class="label">En reparación</div></div>
         <div class="stat-card__icon"><i class="fa-solid fa-arrows-rotate"></i></div>
       </div>
+      <div class="stat-card atendida">
+        <div><div class="number">${stats.atendidas || 0}</div><div class="label">Atendidas</div></div>
+        <div class="stat-card__icon"><i class="fa-solid fa-wrench"></i></div>
+      </div>
       <div class="stat-card completada">
         <div><div class="number">${stats.completadas || 0}</div><div class="label">Completadas</div></div>
         <div class="stat-card__icon"><i class="fa-solid fa-check"></i></div>
@@ -47,6 +50,7 @@ function statusLabel(status) {
   const map = {
     pendiente: 'Pendiente',
     en_progreso: 'En reparación',
+    atendida: 'Atendida',
     completada: 'Completada',
     cancelada: 'Cancelada'
   };

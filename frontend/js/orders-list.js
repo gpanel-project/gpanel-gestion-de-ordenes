@@ -37,7 +37,7 @@ function renderOrders(orders) {
       <td>${new Date(order.created_at).toLocaleDateString('es-CO')}</td>
       <td>
         <a href="order-detail.html?id=${order.id}" class="btn btn-primary btn-sm">Ver</a>
-        ${user.role === 'admin' && order.status === 'completada'
+        ${['completada', 'cancelada'].includes(order.status)
           ? `<button class="btn btn-danger btn-sm" onclick="deleteCompletedOrder(${order.id})">Eliminar</button>`
           : ''}
       </td>
