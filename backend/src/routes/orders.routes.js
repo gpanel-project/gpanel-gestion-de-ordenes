@@ -45,8 +45,8 @@ router.delete('/:id', verifyToken, deleteOrder);
 // Guarda la firma digital (solo el cliente dueño de la orden)
 router.post('/:id/signature', verifyToken, saveSignature);
 
-// Subir imagen/PDF adjunto a una orden (admin o técnico)
-router.post('/:id/images', verifyToken, verifyAdminOrTecnico, upload.single('image'), uploadOrderImage);
+// Subir imagen/PDF adjunto a una orden (cualquier rol autenticado)
+router.post('/:id/images', verifyToken, upload.single('image'), uploadOrderImage);
 
 // Listar adjuntos de una orden
 router.get('/:id/images', verifyToken, getOrderImages);

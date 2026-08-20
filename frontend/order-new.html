@@ -41,10 +41,41 @@
 
         <form id="newOrderForm">
           <div class="form-group">
-            <label for="description">Descripción del problema o servicio</label>
+            <label for="deviceType">Tipo de dispositivo</label>
+            <select id="deviceType" required>
+              <option value="">-- Selecciona un dispositivo --</option>
+              <option value="PC de Escritorio">PC de Escritorio</option>
+              <option value="Portatil">Portatil</option>
+              <option value="Celular">Celular</option>
+              <option value="Impresora">Impresora</option>
+              <option value="Tablet">Tablet</option>
+              <option value="Monitor">Monitor</option>
+              <option value="Teclado">Teclado</option>
+              <option value="Mouse">Mouse</option>
+              <option value="Parlantes">Parlantes</option>
+              <option value="Scanneer">Scanneer</option>
+              <option value="Router">Router</option>
+              <option value="Servidor">Servidor</option>
+              <option value="Otro">Otro</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="description">Descripcion del problema o servicio</label>
             <textarea id="description" name="description" required minlength="10"
-              placeholder="Ej: La impresora HP del área de recepción no imprime, muestra error de atasco de papel."></textarea>
-            <span class="form-hint">Sé lo más específico posible: equipo, marca, y qué está fallando.</span>
+              placeholder="Ej: La impresora HP del area de recepcion no imprime, muestra error de atasco de papel."></textarea>
+            <span class="form-hint">Se lo mas especifico posible: equipo, marca, y que esta fallando.</span>
+          </div>
+
+          <div class="form-group">
+            <label>Imagenes adjuntas <span style="font-weight:400;color:var(--ink-mute)">(opcional)</span></label>
+            <div class="image-dropzone" id="imageDropzone">
+              <i class="fa-solid fa-cloud-arrow-up dropzone-icon"></i>
+              <p class="dropzone-text">Arrastra imagenes aqui o <span class="dropzone-link">selecciona archivos</span></p>
+              <p class="dropzone-hint">JPG, PNG, WEBP - Maximo 5MB por archivo</p>
+              <input type="file" id="imageInput" accept="image/*" multiple style="display:none">
+            </div>
+            <div class="image-preview-grid" id="imagePreviewGrid"></div>
           </div>
 
           <button type="submit" class="btn btn-secondary" id="submitBtn">

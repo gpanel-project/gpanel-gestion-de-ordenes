@@ -32,6 +32,7 @@ function renderOrder(order) {
   document.getElementById('clientName').textContent = order.client_name;
   document.getElementById('clientCompany').textContent = order.client_company || 'N/A';
   document.getElementById('clientAddress').textContent = order.client_address || 'N/A';
+  document.getElementById('deviceType').textContent = order.device_type || 'N/A';
   document.getElementById('technicianName').textContent = order.technician_name || 'Sin asignar';
   document.getElementById('createdAt').textContent = new Date(order.created_at).toLocaleString('es-CO');
   document.getElementById('totalCost').textContent = `$${Number(order.total_cost || 0).toLocaleString('es-CO')}`;
@@ -242,6 +243,30 @@ function showAlert(message) {
 }
 
 loadOrder();
+
+// ─── Cargar imágenes adjuntas de la orden ────────────────────
+async function loadImages() {
+  try {
+    const images = await apiRequest(`/orders/${orderId}/images`);
+    const section = document.getElementById('imagesSection');
+    const grid = document.getElementById('detailImagesGrid');
+
+    if (images.length === 0) {
+      section.style.display = 'none';
+      return;
+    }
+
+    section.style.display = 'block';
+    grid.innerHTML = images.map(img =>
+      `<a href="${img.image_url}" target="_blank" rel="noopener">
+        <img src="${img.image_url}" alt="Adjunto de orden" loading="lazy">
+      </a>`
+    ).join('');
+  } catch (error) {
+    console.error('Error cargando imagenes:', error);
+  }
+}
+loadImages();
 
 // ─── Descargar PDF (con token incluido) ─────────────────────
 document.getElementById('downloadPdfBtn').addEventListener('click', async () => {

@@ -10,22 +10,23 @@
       return res.status(403).json({ error: 'Los técnicos no pueden crear órdenes' });
     }
 
-    let { client_id, technician_id, description } = req.body;
+    let { client_id, technician_id, description, device_type } = req.body;
     technician_id = technician_id || null;
 
     if (req.user.role === 'cliente') {
-      // Ignoramos cualquier client_id enviado por el cliente y lo resolvemos
-      // a partir de su propio usuario, para que no pueda crear a nombre de otro.
       const [clientRow] = await db.query('SELECT id FROM clients WHERE user_id = ?', [req.user.id]);
       if (clientRow.length === 0) {
         return res.status(400).json({ error: 'Tu usuario no tiene un perfil de cliente asociado. Contacta al administrador.' });
       }
       client_id = clientRow[0].id;
-      technician_id = null; // el admin lo asigna después
+      technician_id = null;
     }
 
     if (!client_id || !description) {
       return res.status(400).json({ error: 'Cliente y descripción son obligatorios' });
+    }
+    if (!device_type) {
+      return res.status(400).json({ error: 'El tipo de dispositivo es obligatorio' });
     }
     if (req.user.role === 'admin' && !technician_id) {
       return res.status(400).json({ error: 'Cliente, técnico y descripción son obligatorios' });
@@ -44,9 +45,9 @@
 
       const [rows] = await db.query(
         `INSERT INTO service_orders 
-          (order_number, client_id, technician_id, created_by, description, status) 
-        VALUES (?, ?, ?, ?, ?, 'pendiente') RETURNING id`,
-        [order_number, client_id, technician_id, req.user.id, description]
+          (order_number, client_id, technician_id, created_by, description, device_type, status) 
+        VALUES (?, ?, ?, ?, ?, ?, 'pendiente') RETURNING id`,
+        [order_number, client_id, technician_id, req.user.id, description, device_type]
       );
 
       res.status(201).json({
@@ -101,7 +102,7 @@
         query = `
           SELECT 
             so.id, so.order_number, so.status, so.description,
-            so.total_cost, so.created_at,
+            so.total_cost, so.device_type, so.created_at,
             c.name  AS client_name,
             c.company AS client_company,
             u.name  AS technician_name
@@ -115,7 +116,7 @@
         query = `
           SELECT 
             so.id, so.order_number, so.status, so.description,
-            so.total_cost, so.created_at,
+            so.total_cost, so.device_type, so.created_at,
             c.name AS client_name,
             c.company AS client_company,
             u.name AS technician_name
@@ -131,7 +132,7 @@
         query = `
           SELECT 
             so.id, so.order_number, so.status, so.description,
-            so.total_cost, so.created_at,
+            so.total_cost, so.device_type, so.created_at,
             c.name AS client_name,
             c.company AS client_company,
             u.name AS technician_name
@@ -500,9 +501,26 @@
     }
 
     try {
-      const [existing] = await db.query('SELECT id FROM service_orders WHERE id = ?', [id]);
+      const [existing] = await db.query(
+        'SELECT id, client_id, technician_id FROM service_orders WHERE id = ?', [id]
+      );
       if (existing.length === 0) {
         return res.status(404).json({ error: 'Orden no encontrada' });
+      }
+
+      // Solo el admin, el técnico asignado o el cliente dueño pueden subir adjuntos
+      const order = existing[0];
+      if (req.user.role === 'tecnico' && order.technician_id !== req.user.id) {
+        return res.status(403).json({ error: 'No puedes adjuntar archivos a una orden que no te fue asignada' });
+      }
+      if (req.user.role === 'cliente') {
+        const [clientRow] = await db.query(
+          'SELECT id FROM clients WHERE user_id = ? AND id = ?',
+          [req.user.id, order.client_id]
+        );
+        if (clientRow.length === 0) {
+          return res.status(403).json({ error: 'No puedes adjuntar archivos a una orden que no es tuya' });
+        }
       }
 
       // Subimos el buffer del archivo a Cloudinary.

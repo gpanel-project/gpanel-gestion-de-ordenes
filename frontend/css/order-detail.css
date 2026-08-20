@@ -87,6 +87,33 @@ html[data-theme="dark"] #signatureCanvas {
 }
 
 /* =============================================================
+   5. Detail images grid
+   ============================================================= */
+.detail-images-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 8px;
+}
+.detail-images-grid a {
+  display: block;
+  width: 140px;
+  height: 140px;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  border: 1px solid var(--line);
+  transition: transform 0.2s;
+}
+.detail-images-grid a:hover {
+  transform: scale(1.04);
+}
+.detail-images-grid img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* =============================================================
    6. Responsive
    ============================================================= */
 @media (max-width:768px) {

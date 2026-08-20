@@ -79,6 +79,13 @@ const initDb = async () => {
       ALTER COLUMN technician_id DROP NOT NULL;
     `);
     console.log('✅ technician_id ahora es opcional en service_orders');
+
+    // Columna para el tipo de dispositivo del cliente
+    await pool.query(`
+      ALTER TABLE service_orders
+      ADD COLUMN IF NOT EXISTS device_type VARCHAR(50) DEFAULT NULL;
+    `);
+    console.log('✅ Columna device_type asegurada en service_orders');
   } catch (err) {
     console.error('❌ Error inicializando tablas en PostgreSQL:', err.message);
   }

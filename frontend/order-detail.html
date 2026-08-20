@@ -37,6 +37,7 @@
           <div><span class="detail-label">Cliente</span><div id="clientName">-</div></div>
           <div><span class="detail-label">Empresa</span><div id="clientCompany">-</div></div>
           <div><span class="detail-label">Direccion</span><div id="clientAddress">-</div></div>
+          <div><span class="detail-label">Dispositivo</span><div id="deviceType">-</div></div>
           <div><span class="detail-label">Tecnico</span><div id="technicianName">-</div></div>
           <div><span class="detail-label">Estado</span><div id="orderStatus">-</div></div>
           <div><span class="detail-label">Fecha</span><div id="createdAt">-</div></div>
@@ -109,6 +110,10 @@
             <button id="saveSignature" class="btn btn-secondary btn-sm">Guardar firma y enviar correo</button>
           </div>
         </div>
+      </div>
+      <div class="detail-card" id="imagesSection" style="display:none" data-reveal>
+        <h3>Imagenes adjuntas</h3>
+        <div class="detail-images-grid" id="detailImagesGrid"></div>
       </div>
       <div class="detail-card" id="pdfSection" style="display:none" data-reveal>
         <h3>Documento PDF</h3>
