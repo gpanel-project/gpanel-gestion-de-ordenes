@@ -172,7 +172,92 @@ const sendVerificationEmail = async (email, name, code) => {
   }
 };
 
+// ── 3. Notificación: Orden Atendida (espera firma del cliente) ───
+const sendOrderAttendedEmail = async (order) => {
+  try {
+    const htmlContent = `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; border: 1px solid #e2e8f0;">
+        
+        <div style="background-color: #1a3c5e; padding: 20px; text-align: center;">
+          <h1 style="color: #ffffff; margin: 0; font-size: 22px;">GPanel Mantenimiento</h1>
+          <h2 style="color: #f97316; margin: 5px 0 0 0; font-size: 16px;">Orden Atendida</h2>
+        </div>
+
+        <div style="padding: 24px; color: #334155; line-height: 1.6;">
+          <p>Estimado/a <strong>${order.client_name}</strong>,</p>
+          <p>Su solicitud de servicio con número <strong>${order.order_number}</strong> ha sido <strong style="color: #166534;">atendida exitosamente</strong> por el técnico <strong>${order.technician_name}</strong>.</p>
+          <p>Para dar por finalizada la orden, por favor ingrese a su panel y firme la orden de servicio.</p>
+        </div>
+
+        <div style="padding: 0 24px 24px;">
+          <table style="width: 100%; border-collapse: collapse;">
+            <tr style="background-color: #1a3c5e; color: white;">
+              <td style="padding: 10px; font-weight: bold;">Campo</td>
+              <td style="padding: 10px; font-weight: bold;">Detalle</td>
+            </tr>
+            <tr style="background-color: #f2f2f2;">
+              <td style="padding: 10px;">Número de Orden</td>
+              <td style="padding: 10px;">${order.order_number}</td>
+            </tr>
+            <tr>
+              <td style="padding: 10px;">Cliente</td>
+              <td style="padding: 10px;">${order.client_name}</td>
+            </tr>
+            <tr style="background-color: #f2f2f2;">
+              <td style="padding: 10px;">Técnico</td>
+              <td style="padding: 10px;">${order.technician_name}</td>
+            </tr>
+            <tr>
+              <td style="padding: 10px;">Descripción</td>
+              <td style="padding: 10px;">${order.description || 'N/A'}</td>
+            </tr>
+            <tr style="background-color: #f2f2f2;">
+              <td style="padding: 10px;">Estado</td>
+              <td style="padding: 10px; color: #166534; font-weight: bold;">ATENDIDA</td>
+            </tr>
+          </table>
+        </div>
+
+        <div style="padding: 20px 24px; background-color: #fef3c7; text-align: center;">
+          <p style="margin: 0; color: #92400e; font-size: 14px;">
+            <strong>Siguiente paso:</strong> Firme la orden desde su panel para completar el servicio.
+          </p>
+        </div>
+
+        <div style="background-color: #1a3c5e; padding: 15px; text-align: center;">
+          <p style="color: white; margin: 0; font-size: 12px;">
+            Sistema de Gestión de Órdenes de Mantenimiento - GPanel
+          </p>
+        </div>
+
+      </div>
+    `;
+
+    const recipients = [];
+    if (order.client_email) recipients.push(order.client_email);
+
+    if (recipients.length === 0) {
+      console.warn('⚠️ No hay correo del cliente para enviar notificación de orden atendida');
+      return null;
+    }
+
+    const response = await resend.emails.send({
+      from: FROM_EMAIL,
+      to: recipients,
+      subject: `Orden ${order.order_number} - Atendida, pendiente de firma`,
+      html: htmlContent
+    });
+
+    console.log(`✅ Correo de orden atendida enviado vía Resend ID: ${response.data?.id || response.id}`);
+    return response;
+  } catch (error) {
+    console.error('❌ Error enviando correo de orden atendida:', error.message);
+    throw error;
+  }
+};
+
 module.exports = {
   sendOrderEmail,
-  sendVerificationEmail
+  sendVerificationEmail,
+  sendOrderAttendedEmail
 };

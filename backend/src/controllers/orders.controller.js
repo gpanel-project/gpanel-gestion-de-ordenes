@@ -1,5 +1,5 @@
   const db = require('../db');
-  const { sendOrderEmail } = require('../services/email.service');
+  const { sendOrderEmail, sendOrderAttendedEmail } = require('../services/email.service');
 
   // ─── CREAR ORDEN ──────────────────────────────────────────
   // Admin: crea la orden a nombre de cualquier cliente y asigna técnico.
@@ -253,6 +253,29 @@
       }
 
       await db.query('UPDATE service_orders SET status = ? WHERE id = ?', [status, id]);
+
+      // Si el técnico marca la orden como atendida, notificamos al cliente
+      if (status === 'atendida') {
+        try {
+          const [orderData] = await db.query(
+            `SELECT 
+              so.order_number, so.description,
+              c.name AS client_name, c.email AS client_email,
+              u.name AS technician_name
+            FROM service_orders so
+            JOIN clients c ON so.client_id = c.id
+            LEFT JOIN users u ON so.technician_id = u.id
+            WHERE so.id = ?`,
+            [id]
+          );
+          if (orderData.length > 0) {
+            await sendOrderAttendedEmail(orderData[0]);
+          }
+        } catch (emailError) {
+          console.error('Error enviando correo de orden atendida:', emailError.message);
+        }
+      }
+
       res.json({ mensaje: `Estado actualizado a: ${status}` });
     } catch (error) {
       res.status(500).json({ error: error.message });
