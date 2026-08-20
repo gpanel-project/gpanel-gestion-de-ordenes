@@ -15,6 +15,7 @@ if (!orderId) {
 }
 
 let currentOrder = null;
+let availableParts = [];
 
 // ─── Cargamos los datos de la orden ────────────────────────
 async function loadOrder() {
@@ -105,6 +106,10 @@ function renderOrder(order) {
       statusSelect.value = 'atendida';
 
       if (statusLockedHint) statusLockedHint.style.display = 'none';
+
+      // Mostrar selector de repuestos del inventario
+      document.getElementById('partsInventoryGroup').style.display = 'block';
+      loadAvailableParts();
     } else {
       editSection.style.display = 'none';
     }
@@ -138,6 +143,64 @@ async function loadTechnicians() {
   } catch (error) {
     console.error('Error cargando técnicos:', error);
   }
+}
+
+// ─── Cargar repuestos disponibles del inventario ───────────
+async function loadAvailableParts() {
+  try {
+    availableParts = await apiRequest('/inventory/available');
+    renderPartsSelector();
+  } catch (error) {
+    console.error('Error cargando inventario:', error);
+  }
+}
+
+function renderPartsSelector() {
+  const container = document.getElementById('inventoryPartsSelector');
+  if (availableParts.length === 0) {
+    container.innerHTML = '<p style="color:var(--ink-mute);font-size:13px">No hay repuestos disponibles en inventario</p>';
+    return;
+  }
+
+  container.innerHTML = availableParts.map(part => `
+    <div class="inventory-part-row">
+      <label class="inventory-part-check">
+        <input type="checkbox" class="part-checkbox" data-id="${part.id}" data-max="${part.quantity}">
+        <span class="part-info">
+          <span class="part-name">${part.name}</span>
+          <span class="part-code">${part.code}</span>
+          <span class="part-stock">Stock: ${part.quantity}</span>
+        </span>
+      </label>
+      <input type="number" class="part-qty-input" data-id="${part.id}" min="1" max="${part.quantity}" value="1" disabled>
+    </div>
+  `).join('');
+
+  // Habilitar/deshabilitar inputs de cantidad segun checkbox
+  container.querySelectorAll('.part-checkbox').forEach(cb => {
+    cb.addEventListener('change', () => {
+      const qtyInput = container.querySelector(`.part-qty-input[data-id="${cb.dataset.id}"]`);
+      qtyInput.disabled = !cb.checked;
+      if (cb.checked) {
+        qtyInput.focus();
+      } else {
+        qtyInput.value = 1;
+      }
+    });
+  });
+}
+
+function getSelectedParts() {
+  const parts = [];
+  document.querySelectorAll('.part-checkbox:checked').forEach(cb => {
+    const id = parseInt(cb.dataset.id);
+    const qtyInput = document.querySelector(`.part-qty-input[data-id="${id}"]`);
+    const qty = parseInt(qtyInput.value);
+    if (qty > 0) {
+      parts.push({ inventory_id: id, quantity_used: qty });
+    }
+  });
+  return parts;
 }
 
 // ─── Asignar técnico a la orden (solo admin) ───────────────
@@ -174,10 +237,20 @@ document.getElementById('editForm').addEventListener('submit', async (e) => {
     // 2. Actualizamos el estado (solo si cambió; en completadas/canceladas queda bloqueado)
     const newStatus = document.getElementById('statusSelect').value;
     if (newStatus !== currentOrder.status) {
-      await apiRequest(`/orders/${orderId}/status`, 'PATCH', { status: newStatus });
+      const payload = { status: newStatus };
+
+      // Si el tecnico marca como atendida, enviamos los repuestos seleccionados
+      if (newStatus === 'atendida' && user.role === 'tecnico') {
+        const selectedParts = getSelectedParts();
+        if (selectedParts.length > 0) {
+          payload.parts_used = selectedParts;
+        }
+      }
+
+      await apiRequest(`/orders/${orderId}/status`, 'PATCH', payload);
     }
 
-    showAlert('✅ Cambios guardados exitosamente');
+    showAlert('Cambios guardados exitosamente');
     loadOrder();
 
   } catch (error) {

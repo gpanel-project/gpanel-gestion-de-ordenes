@@ -72,9 +72,14 @@
             <label>Trabajo realizado</label>
             <textarea id="work_done" rows="3"></textarea>
           </div>
+          <div class="form-group" id="partsInventoryGroup" style="display:none">
+            <label>Repuestos del inventario</label>
+            <div id="inventoryPartsSelector"></div>
+            <span class="form-hint">Selecciona los repuestos utilizados y sus cantidades</span>
+          </div>
           <div class="form-group">
-            <label>Repuestos utilizados</label>
-            <textarea id="parts_used" rows="2"></textarea>
+            <label>Repuestos utilizados (texto libre)</label>
+            <textarea id="parts_used" rows="2" placeholder="Describe los repuestos usados..."></textarea>
           </div>
           <div class="form-group">
             <label>Costo total</label>

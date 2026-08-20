@@ -5,6 +5,7 @@ const db = require('./db');
 const authRoutes = require('./routes/auth.routes');
 const usersRoutes = require('./routes/users.routes');
 const ordersRoutes = require('./routes/orders.routes');
+const inventoryRoutes = require('./routes/inventory.routes');
 
 const app = express();
 app.use(cors());
@@ -32,6 +33,7 @@ app.post('/test-post', (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/users', usersRoutes);
 app.use('/api/orders', ordersRoutes);
+app.use('/api/inventory', inventoryRoutes);
 
 // ── Manejo de errores (multer y otros) en JSON ─────────
 app.use((err, req, res, next) => {

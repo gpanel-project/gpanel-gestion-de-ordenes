@@ -689,3 +689,92 @@ html[data-theme="dark"] .image-preview-item {
   transform: none;
 }
 
+/* =============================================================
+   9. Selector de repuestos del inventario
+   ============================================================= */
+.inventory-part-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  margin-bottom: 8px;
+  background: var(--bg-card);
+  transition: border-color 0.2s;
+}
+.inventory-part-row:hover {
+  border-color: var(--accent);
+}
+
+.inventory-part-check {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  cursor: pointer;
+}
+
+.inventory-part-check input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+.part-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.part-name {
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--ink);
+}
+
+.part-code {
+  font-size: 11px;
+  background: var(--bg);
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: var(--ink-mute);
+}
+
+.part-stock {
+  font-size: 12px;
+  color: var(--ink-mute);
+}
+
+.part-qty-input {
+  width: 70px;
+  padding: 6px 8px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  font-size: 14px;
+  text-align: center;
+  background: var(--bg);
+  color: var(--ink);
+}
+.part-qty-input:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.part-qty-input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-glow);
+}
+
+html[data-theme="dark"] .inventory-part-row {
+  background: var(--bg-card);
+  border-color: var(--line);
+}
+html[data-theme="dark"] .part-qty-input {
+  background: var(--bg);
+  color: var(--ink);
+  border-color: var(--line);
+}
+

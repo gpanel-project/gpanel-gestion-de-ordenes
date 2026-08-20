@@ -86,6 +86,30 @@ const initDb = async () => {
       ADD COLUMN IF NOT EXISTS device_type VARCHAR(50) DEFAULT NULL;
     `);
     console.log('✅ Columna device_type asegurada en service_orders');
+
+    // Tabla de inventario de repuestos
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS inventory (
+        id SERIAL PRIMARY KEY,
+        code VARCHAR(20) UNIQUE NOT NULL,
+        name VARCHAR(255) NOT NULL,
+        quantity INTEGER NOT NULL DEFAULT 0,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+    console.log('✅ Tabla inventory lista en PostgreSQL');
+
+    // Tabla pivote: repuestos usados en cada orden
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS order_parts (
+        id SERIAL PRIMARY KEY,
+        order_id INTEGER NOT NULL REFERENCES service_orders(id) ON DELETE CASCADE,
+        inventory_id INTEGER NOT NULL REFERENCES inventory(id) ON DELETE CASCADE,
+        quantity_used INTEGER NOT NULL DEFAULT 1,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+    console.log('✅ Tabla order_parts lista en PostgreSQL');
   } catch (err) {
     console.error('❌ Error inicializando tablas en PostgreSQL:', err.message);
   }

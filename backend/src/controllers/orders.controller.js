@@ -218,7 +218,7 @@
   // ─── CAMBIAR ESTADO DE LA ORDEN ───────────────────────────
   const updateOrderStatus = async (req, res) => {
     const { id } = req.params;
-    const { status } = req.body;
+    const { status, parts_used } = req.body;
 
     const validStatuses = ['pendiente', 'en_progreso', 'atendida', 'completada', 'cancelada'];
     if (!validStatuses.includes(status)) {
@@ -249,6 +249,34 @@
         // Técnico solo puede pasar de en_progreso → atendida
         if (existing[0].status !== 'en_progreso' || status !== 'atendida') {
           return res.status(400).json({ error: 'El técnico solo puede marcar una orden EN PROGRESO como ATENDIDA' });
+        }
+      }
+
+      // ── Si el técnico marca como ATENDIDA, procesar repuestos ──
+      if (status === 'atendida' && parts_used && Array.isArray(parts_used) && parts_used.length > 0) {
+        // Validar que todos los repuestos tengan stock suficiente
+        for (const part of parts_used) {
+          if (!part.inventory_id || !part.quantity_used || part.quantity_used <= 0) {
+            return res.status(400).json({ error: 'Datos de repuesto inválidos' });
+          }
+          const [item] = await db.query('SELECT id, name, quantity FROM inventory WHERE id = ?', [part.inventory_id]);
+          if (item.length === 0) {
+            return res.status(400).json({ error: `Repuesto con id ${part.inventory_id} no encontrado` });
+          }
+          if (item[0].quantity < part.quantity_used) {
+            return res.status(400).json({
+              error: `Stock insuficiente para "${item[0].name}". Disponible: ${item[0].quantity}, solicitado: ${part.quantity_used}`
+            });
+          }
+        }
+
+        // Descontar inventario y registrar en order_parts
+        for (const part of parts_used) {
+          await db.query('UPDATE inventory SET quantity = quantity - ? WHERE id = ?', [part.quantity_used, part.inventory_id]);
+          await db.query(
+            'INSERT INTO order_parts (order_id, inventory_id, quantity_used) VALUES (?, ?, ?)',
+            [id, part.inventory_id, part.quantity_used]
+          );
         }
       }
 

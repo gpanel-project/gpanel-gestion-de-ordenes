@@ -14,6 +14,7 @@ function renderSidebar(activePage) {
   if (user.role === 'admin') {
     links += `
       <a href="users.html" class="${activePage === 'users' ? 'active' : ''}"><i class="fa-solid fa-users"></i> Usuarios</a>
+      <a href="inventory.html" class="${activePage === 'inventory' ? 'active' : ''}"><i class="fa-solid fa-boxes-stacked"></i> Inventario</a>
     `;
   } else if (user.role === 'cliente') {
     links += `

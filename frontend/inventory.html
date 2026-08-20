@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inventario - Gestion de Mantenimiento</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap">
+  <link rel="stylesheet" href="css/styles.css?v=2.0">
+  <link rel="stylesheet" href="css/layout.css?v=2.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="icon" type="image/x-icon" href="https://res.cloudinary.com/ztbcsp9h/image/upload/gpanel-web/gpanel-icon.ico">
+</head>
+<body>
+  <div class="bg-decoration" aria-hidden="true">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+    <div class="blob blob-4"></div>
+  </div>
+
+  <div class="app-container" id="appContainer">
+    <div class="main-content">
+      <div class="page-header">
+        <div>
+          <h1>Inventario de Repuestos</h1>
+          <p class="page-subtitle">Gestiona los repuestos disponibles para los tecnicos</p>
+        </div>
+        <button class="sidebar-theme-btn" data-theme-toggle aria-label="Cambiar a modo oscuro" title="Modo oscuro">
+          <i class="fa-solid fa-moon"></i>
+        </button>
+      </div>
+
+      <div id="alertBox" class="alert"></div>
+
+      <div class="stats-grid" id="inventoryStats" data-reveal></div>
+
+      <button class="btn btn-secondary btn-create" onclick="openCreateModal()">
+        <i class="fa-solid fa-plus"></i> Nuevo repuesto
+      </button>
+
+      <div class="table-container" data-reveal>
+        <table>
+          <thead>
+            <tr>
+              <th>Codigo</th>
+              <th>Nombre</th>
+              <th>Cantidad</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="inventoryTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Crear Repuesto -->
+  <div id="createModal" class="modal-overlay" style="display:none">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Nuevo Repuesto</h3>
+        <button class="modal-close" onclick="closeCreateModal()">&times;</button>
+      </div>
+      <form id="createForm">
+        <div class="form-group">
+          <label for="itemName">Nombre</label>
+          <input type="text" id="itemName" required placeholder="Ej: Disco Duro SSD 240GB">
+        </div>
+        <div class="form-group">
+          <label for="itemQuantity">Cantidad inicial</label>
+          <input type="number" id="itemQuantity" min="0" value="0">
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-cancel" onclick="closeCreateModal()">Cancelar</button>
+          <button type="submit" class="btn btn-primary" id="createSubmitBtn">Crear</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Editar Cantidad -->
+  <div id="quantityModal" class="modal-overlay" style="display:none">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Actualizar cantidad</h3>
+        <button class="modal-close" onclick="closeQuantityModal()">&times;</button>
+      </div>
+      <form id="quantityForm">
+        <div class="form-group">
+          <label>Repuesto</label>
+          <input type="text" id="quantityItemName" disabled>
+        </div>
+        <div class="form-group">
+          <label for="quantityInput">Nueva cantidad</label>
+          <input type="number" id="quantityInput" min="0" required>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-cancel" onclick="closeQuantityModal()">Cancelar</button>
+          <button type="submit" class="btn btn-primary" id="quantitySubmitBtn">Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/api.js?v=2.0"></script>
+  <script src="js/auth.js?v=2.0"></script>
+  <script src="js/theme.js?v=2.0"></script>
+  <script src="js/sidebar.js?v=2.0"></script>
+  <script src="js/inventory.js?v=2.0"></script>
+  <script src="js/effects.js?v=2.0"></script>
+  <script src="js/footer.js?v=2.0"></script>
+</body>
+</html>
