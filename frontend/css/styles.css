@@ -294,12 +294,9 @@ body * {
 
 .login-card__logo {
   display: block;
-  width: auto;
   height: auto;
   max-width: 290px;
-  max-height: 300px;
   margin: 0 auto 14px;
-  object-fit: contain;
 }
 
 .login-card p.subtitle {

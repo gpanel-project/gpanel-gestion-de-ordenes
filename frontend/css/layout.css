@@ -30,8 +30,8 @@
 
 .sidebar-header__logo {
   display: block;
-  width: auto;
   height: auto;
+  margin-bottom: 12px;
 }
 
 .sidebar-header h2 {
@@ -905,8 +905,8 @@ html[data-theme="dark"] .badge-cliente {
   }
 
   .mobile-header__logo {
-    height: 32px;
-    width: auto;
+    height: 80px;
+    width: 150px;
   }
 
   .menu-toggle {
@@ -958,8 +958,7 @@ html[data-theme="dark"] .badge-cliente {
   }
 
   .sidebar-header__logo {
-    max-height: 40px;
-    max-width: 150px;
+    max-width: 200px;
   }
 
   .sidebar-header p {
