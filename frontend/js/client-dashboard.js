@@ -62,7 +62,7 @@ function renderOrders() {
 
   if (myOrders.length === 0) {
     tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:30px">
-      Aún no tienes órdenes de servicio. <a href="order-new.html">Crea la primera</a>.
+      Aún no tienes órdenes de servicio. <a href="order-new.html">Solicita la primera</a>.
     </td></tr>`;
     return;
   }
@@ -123,9 +123,9 @@ document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeHelp(
 document.getElementById('helpWhatsapp').addEventListener('click', () => {
   window.open('https://wa.me/573000000000?text=Hola,%20necesito%20ayuda%20con%20una%20orden%20de%20servicio', '_blank');
 });
-document.getElementById('helpEmail').addEventListener('click', () => {
-  window.location.href = 'mailto:soporte@vusuministros.com?subject=Ayuda%20con%20orden%20de%20servicio';
-});
+// document.getElementById('helpEmail').addEventListener('click', () => {
+//  window.location.href = 'mailto:soporte@vusuministros.com?subject=Ayuda%20con%20orden%20de%20servicio';
+// });
 
 loadStats();
 loadOrders();

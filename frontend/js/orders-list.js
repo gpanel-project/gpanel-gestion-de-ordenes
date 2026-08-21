@@ -26,6 +26,8 @@ function renderOrders(orders) {
     return;
   }
 
+  const canDelete = ['admin', 'tecnico'].includes(user.role);
+
   tbody.innerHTML = orders.map(order => `
     <tr>
       <td><strong>${order.order_number}</strong></td>
@@ -37,7 +39,7 @@ function renderOrders(orders) {
       <td>${new Date(order.created_at).toLocaleDateString('es-CO')}</td>
       <td>
         <a href="order-detail.html?id=${order.id}" class="btn btn-primary btn-sm">Ver</a>
-        ${['completada', 'cancelada'].includes(order.status)
+        ${canDelete && ['completada', 'cancelada'].includes(order.status)
           ? `<button class="btn btn-danger btn-sm" onclick="deleteCompletedOrder(${order.id})">Eliminar</button>`
           : ''}
       </td>
@@ -45,7 +47,7 @@ function renderOrders(orders) {
   `).join('');
 }
 
-// ─── Eliminar una orden COMPLETADA (solo admin) ──────────────
+// ─── Eliminar una orden COMPLETADA (solo admin o técnico) ────
 async function deleteCompletedOrder(id) {
   if (!confirm('¿Eliminar esta orden completada?\n\nEsta acción no se puede deshacer.')) return;
 

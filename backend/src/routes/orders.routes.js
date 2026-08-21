@@ -40,7 +40,7 @@ router.patch('/:id/assign', verifyToken, verifyAdmin, assignTechnician);
 router.patch('/:id/cancel', verifyToken, cancelOrder);
 
 // Eliminar → admin o técnico (solo completada/cancelada)
-router.delete('/:id', verifyToken, deleteOrder);
+router.delete('/:id', verifyToken, verifyAdminOrTecnico, deleteOrder);
 
 // Guarda la firma digital (solo el cliente dueño de la orden)
 router.post('/:id/signature', verifyToken, saveSignature);
@@ -52,6 +52,6 @@ router.post('/:id/images', verifyToken, upload.single('image'), uploadOrderImage
 router.get('/:id/images', verifyToken, getOrderImages);
 
 // Descarga el PDF
-router.get('/:id/pdf',        verifyToken, downloadPDF);   
+router.get('/:id/pdf',        verifyToken, downloadPDF);
 
 module.exports = router;

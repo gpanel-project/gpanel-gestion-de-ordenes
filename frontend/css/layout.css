@@ -125,9 +125,8 @@
   inset: 0;
   z-index: -1;
   background:
-    radial-gradient(ellipse 50% 40% at 20% 30%, rgba(249, 115, 22, 0.14) 0%, transparent 55%),
-    radial-gradient(ellipse 40% 35% at 80% 80%, rgba(30, 58, 95, 0.10) 0%, transparent 50%);
-  filter: blur(60px);
+    radial-gradient(ellipse 50% 40% at 20% 30%, rgba(249, 115, 22, 0.1) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 35% at 80% 80%, rgba(30, 58, 95, 0.07) 0%, transparent 55%);
   pointer-events: none;
 }
 
@@ -181,9 +180,7 @@
   justify-content: center;
   border-radius: 50%;
   font-size: 16px;
-  background: rgba(255, 255, 255, 0.6);
-  backdrop-filter: blur(12px) saturate(180%);
-  -webkit-backdrop-filter: blur(12px) saturate(180%);
+  background: rgba(255, 255, 255, 0.92);
   border: 1px solid rgba(255, 255, 255, 0.5);
   color: var(--navy);
   box-shadow: var(--shadow);
@@ -198,7 +195,7 @@
 }
 
 html[data-theme="dark"] .page-header .sidebar-theme-btn {
-  background: rgba(20, 47, 73, 0.6);
+  background: rgba(20, 47, 73, 0.92);
   border-color: rgba(238, 243, 248, 0.12);
   color: #fdba74;
 }
@@ -217,28 +214,16 @@ html[data-theme="dark"] .page-header .sidebar-theme-btn:hover {
   margin-bottom: 32px;
 }
 
-/* ── Glass card base ──────────────────────────────────────── */
+/* ── Glass card base (ahora opaca, sin backdrop-filter) ──── */
 .table-container,
 .detail-card,
 .modal-card,
 .chart-card {
-  background: rgba(255, 255, 255, 0.6);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  background: rgba(255, 255, 255, 0.92);
   border: 1px solid rgba(255, 255, 255, 0.55);
   box-shadow:
     0 4px 24px rgba(0, 0, 0, 0.04),
     inset 0 1px 0 rgba(255, 255, 255, 0.7);
-}
-
-@supports not (backdrop-filter:blur(20px)) {
-
-  .table-container,
-  .detail-card,
-  .modal-card,
-  .chart-card {
-    background: rgba(255, 255, 255, 0.92);
-  }
 }
 
 /* ── Charts (métricas del dashboard) ─────────────────────── */
@@ -505,11 +490,8 @@ tbody tr:hover {
   display: flex;
   gap: 6px;
   align-items: center;
-  /* Centra verticalmente el contenido */
   justify-content: center;
-  /* Centra horizontalmente (opcional, para los iconos) */
   min-height: 32px;
-  /* Iguala la altura mínima al tamaño de tus botones */
 }
 
 .btn-icon {
@@ -579,9 +561,7 @@ tbody tr:hover {
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.55);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -684,15 +664,15 @@ html[data-theme="dark"] .page-header h1 {
 
 html[data-theme="dark"] .main-content::before {
   background:
-    radial-gradient(ellipse 50% 40% at 20% 30%, rgba(249, 115, 22, 0.10) 0%, transparent 55%),
-    radial-gradient(ellipse 40% 35% at 80% 80%, rgba(42, 82, 152, 0.14) 0%, transparent 50%);
+    radial-gradient(ellipse 50% 40% at 20% 30%, rgba(249, 115, 22, 0.07) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 35% at 80% 80%, rgba(42, 82, 152, 0.1) 0%, transparent 55%);
 }
 
 html[data-theme="dark"] .table-container,
 html[data-theme="dark"] .detail-card,
 html[data-theme="dark"] .modal-card,
 html[data-theme="dark"] .chart-card {
-  background: rgba(20, 47, 73, 0.55);
+  background: rgba(20, 47, 73, 0.95);
   border-color: rgba(238, 243, 248, 0.08);
   box-shadow:
     0 4px 24px rgba(0, 0, 0, 0.3),
@@ -726,7 +706,7 @@ html[data-theme="dark"] tbody tr:hover {
 }
 
 html[data-theme="dark"] .modal-overlay {
-  background: rgba(0, 0, 0, 0.55);
+  background: rgba(0, 0, 0, 0.65);
 }
 
 html[data-theme="dark"] .modal-header h3 {
@@ -901,7 +881,6 @@ html[data-theme="dark"] .badge-cliente {
     display: block;
   }
 
-  /* Barra superior fija con el botón de 3 líneas */
   .mobile-header {
     display: flex;
     position: fixed;
@@ -930,8 +909,6 @@ html[data-theme="dark"] .badge-cliente {
     width: auto;
   }
 
-
-
   .menu-toggle {
     width: 44px;
     height: 44px;
@@ -951,7 +928,6 @@ html[data-theme="dark"] .badge-cliente {
     transform: translateY(-1px);
   }
 
-  /* Sidebar = nav desplegable que ocupa el 100% del viewport */
   .sidebar {
     position: fixed;
     top: 0;
@@ -1048,7 +1024,6 @@ html[data-theme="dark"] .badge-cliente {
     font-size: 14px;
   }
 
-  /* Bloquea el scroll del fondo mientras el menú está abierto */
   body.menu-open {
     overflow: hidden;
   }
@@ -1071,7 +1046,6 @@ html[data-theme="dark"] .badge-cliente {
     height: 220px;
   }
 
-  /* Las tablas con muchas columnas se desplazan dentro del contenedor */
   .table-container table {
     min-width: 640px;
   }
