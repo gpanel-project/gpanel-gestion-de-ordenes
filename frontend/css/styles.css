@@ -496,6 +496,12 @@ html[data-theme="dark"] .form-hint {
   border: 1px solid rgba(34, 197, 94, 0.2);
 }
 
+.alert-info {
+  background: rgba(59, 130, 246, 0.12);
+  color: #1e40af;
+  border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
 /* ── Dark: alertas ────────────────────────────────────────── */
 html[data-theme="dark"] .alert-error {
   background: rgba(239, 68, 68, 0.12);
@@ -766,4 +772,26 @@ html[data-theme="dark"] .part-qty-input {
   background: var(--bg);
   color: var(--ink);
   border-color: var(--line);
+}
+
+/* =============================================================
+   Mis Datos - distribución en 2 columnas
+   ============================================================= */
+.my-data-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 28px;
+  align-items: start;
+  max-width: 1280px;
+}
+
+.my-data-grid .detail-card {
+  max-width: none;
+  width: 100%;
+}
+
+@media (max-width: 1024px) {
+  .my-data-grid {
+    grid-template-columns: 1fr;
+  }
 }

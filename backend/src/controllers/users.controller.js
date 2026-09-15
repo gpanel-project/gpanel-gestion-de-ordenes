@@ -97,6 +97,55 @@ const deleteUser = async (req, res) => {
   }
 };
 
+// ─── OBTENER MI PERFIL (usuario autenticado) ────────────────
+const getMyProfile = async (req, res) => {
+  try {
+    const [users] = await db.query(
+      `SELECT u.id, u.name, u.email, u.role, u.active,
+              c.company, c.phone, c.address
+       FROM users u
+       LEFT JOIN clients c ON c.user_id = u.id
+       WHERE u.id = ?`,
+      [req.user.id]
+    );
+    if (users.length === 0) {
+      return res.status(404).json({ error: 'Usuario no encontrado' });
+    }
+    res.json(users[0]);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// ─── ACTUALIZAR MI PERFIL (usuario autenticado, sin email) ──
+const updateMyProfile = async (req, res) => {
+  const { name, company, phone, address } = req.body;
+
+  if (!name) {
+    return res.status(400).json({ error: 'El nombre es obligatorio' });
+  }
+
+  try {
+    const [existing] = await db.query('SELECT id FROM users WHERE id = ?', [req.user.id]);
+    if (existing.length === 0) {
+      return res.status(404).json({ error: 'Usuario no encontrado' });
+    }
+
+    await db.query('UPDATE users SET name = ? WHERE id = ?', [name, req.user.id]);
+
+    // Si el usuario tiene perfil de cliente, actualizamos también sus datos
+    // (el email se mantiene intocable)
+    await db.query(
+      'UPDATE clients SET name = ?, company = ?, phone = ?, address = ? WHERE user_id = ?',
+      [name, company || null, phone || null, address || null, req.user.id]
+    );
+
+    res.json({ mensaje: 'Tus datos fueron actualizados exitosamente' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 // ─── ESTADÍSTICAS DE USUARIOS ─────────────────────────────
 const getUserStats = async (req, res) => {
   try {
@@ -121,4 +170,4 @@ const getUserStats = async (req, res) => {
   }
 };
 
-module.exports = { getUsers, getUserById, createUser, updateUser, deleteUser, getUserStats };
+module.exports = { getUsers, getUserById, createUser, updateUser, deleteUser, getUserStats, getMyProfile, updateMyProfile };

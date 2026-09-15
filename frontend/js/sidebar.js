@@ -20,6 +20,7 @@ function renderSidebar(activePage) {
   } else if (user.role === 'cliente') {
     links += `
       <a href="order-new.html" class="${activePage === 'order-new' ? 'active' : ''}"><i class="fa-solid fa-plus"></i> Nueva Orden</a>
+      <a href="my-data.html" class="${activePage === 'my-data' ? 'active' : ''}"><i class="fa-solid fa-id-card"></i> Mis Datos</a>
     `;
   }
 

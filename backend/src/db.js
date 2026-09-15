@@ -110,6 +110,18 @@ const initDb = async () => {
       );
     `);
     console.log('✅ Tabla order_parts lista en PostgreSQL');
+
+    // Cambios de contraseña pendientes de verificación por correo (2FA)
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS pending_password_resets (
+        id SERIAL PRIMARY KEY,
+        user_id INTEGER NOT NULL UNIQUE REFERENCES users(id) ON DELETE CASCADE,
+        new_password_hash TEXT NOT NULL,
+        verification_code VARCHAR(10) NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+    console.log('✅ Tabla pending_password_resets lista en PostgreSQL');
   } catch (err) {
     console.error('❌ Error inicializando tablas en PostgreSQL:', err.message);
   }

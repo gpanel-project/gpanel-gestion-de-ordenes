@@ -113,3 +113,38 @@ Authorization: Bearer TU_TOKEN
 {
   "signature_base64": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
 }
+
+### 13. Ver mi perfil (usuario autenticado - cliente)
+GET http://localhost:3000/api/users/profile
+Authorization: Bearer TU_TOKEN
+
+### 14. Actualizar mi perfil (sin email)
+PUT http://localhost:3000/api/users/profile
+Content-Type: application/json
+Authorization: Bearer TU_TOKEN
+
+{
+  "name": "Juan Perez",
+  "company": "Mi Empresa S.A.",
+  "phone": "+54 11 1234-5678",
+  "address": "Calle Falsa 123, Buenos Aires"
+}
+
+### 15. Solicitar cambio de contraseña (envía código por correo)
+POST http://localhost:3000/api/auth/request-password-change
+Content-Type: application/json
+Authorization: Bearer TU_TOKEN
+
+{
+  "current_password": "miClaveActual",
+  "new_password": "miNuevaClave123"
+}
+
+### 16. Verificar código y aplicar el cambio de contraseña
+POST http://localhost:3000/api/auth/verify-password-change
+Content-Type: application/json
+Authorization: Bearer TU_TOKEN
+
+{
+  "code": "123456"
+}

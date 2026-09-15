@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 const db = require('./db');
 const authRoutes = require('./routes/auth.routes');
 const usersRoutes = require('./routes/users.routes');
@@ -34,6 +35,12 @@ app.use('/api/auth', authRoutes);
 app.use('/api/users', usersRoutes);
 app.use('/api/orders', ordersRoutes);
 app.use('/api/inventory', inventoryRoutes);
+
+// ── Frontend estático (mismo puerto que la API) ────────
+// Los links de los correos apuntan a FRONTEND_URL; al servir la
+// carpeta frontend desde Express, my-data.html y sus assets siempre
+// están disponibles en http://localhost:<PORT> (3000 por defecto).
+app.use(express.static(path.join(__dirname, '..', '..', 'frontend')));
 
 // ── Manejo de errores (multer y otros) en JSON ─────────
 app.use((err, req, res, next) => {

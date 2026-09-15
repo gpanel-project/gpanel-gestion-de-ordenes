@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mis Datos - Gestion de Mantenimiento</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap">
+  <link rel="stylesheet" href="css/styles.css?v=2.0">
+  <link rel="stylesheet" href="css/layout.css?v=2.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="icon" type="image/x-icon" href="https://res.cloudinary.com/ztbcsp9h/image/upload/gpanel-web/gpanel-icon.ico">
+</head>
+<body>
+  <div class="bg-decoration" aria-hidden="true">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+    <div class="blob blob-4"></div>
+  </div>
+
+  <div class="app-container" id="appContainer">
+    <div class="main-content">
+      <div class="page-header">
+        <div>
+          <h1>Mis Datos</h1>
+          <p class="page-subtitle">Actualiza tu información personal y tu contraseña</p>
+        </div>
+        <button class="sidebar-theme-btn" data-theme-toggle aria-label="Cambiar a modo oscuro" title="Modo oscuro">
+          <i class="fa-solid fa-moon"></i>
+        </button>
+      </div>
+
+      <div id="alertBox" class="alert" style="display:none;"></div>
+
+      <div class="my-data-grid">
+
+        <div class="detail-card" data-reveal style="border-radius:var(--radius); padding:28px;">
+          <h3><i class="fa-solid fa-user-pen"></i> Información personal</h3>
+          <p class="form-hint">El correo electrónico no se puede modificar.</p>
+
+          <form id="profileForm">
+            <div class="form-group">
+              <label for="profileName">Nombre completo</label>
+              <input type="text" id="profileName" required>
+            </div>
+            <div class="form-group">
+              <label for="profileEmail">Correo electrónico</label>
+              <input type="email" id="profileEmail" disabled>
+              <span class="form-hint">El correo se usa para la verificación de tu cuenta y no es editable.</span>
+            </div>
+            <div class="form-group">
+              <label for="profileCompany">Empresa</label>
+              <input type="text" id="profileCompany" placeholder="Mi Empresa S.A.">
+            </div>
+            <div class="form-group">
+              <label for="profilePhone">Teléfono</label>
+              <input type="tel" id="profilePhone" placeholder="+54 11 1234-5678">
+            </div>
+            <div class="form-group">
+              <label for="profileAddress">Dirección</label>
+              <input type="text" id="profileAddress" placeholder="Calle y número, ciudad">
+            </div>
+            <button type="submit" class="btn btn-primary" style="width:auto;padding:10px 25px" id="profileSaveBtn">
+              Guardar datos
+            </button>
+          </form>
+        </div>
+
+        <div class="detail-card" data-reveal style="border-radius:var(--radius); padding:28px;">
+          <h3><i class="fa-solid fa-key"></i> Cambiar contraseña</h3>
+          <p class="form-hint">Verifica tu identidad con la contraseña actual y un código que enviaremos a tu correo.</p>
+
+          <form id="passwordForm">
+            <div class="form-group">
+              <label for="currentPassword">Contraseña actual</label>
+              <input type="password" id="currentPassword" required>
+            </div>
+            <div class="form-group">
+              <label for="newPassword">Nueva contraseña</label>
+              <input type="password" id="newPassword" required minlength="6">
+              <span class="form-hint">Mínimo 6 caracteres.</span>
+            </div>
+            <div class="form-group">
+              <label for="newPasswordConfirm">Confirmar nueva contraseña</label>
+              <input type="password" id="newPasswordConfirm" required minlength="6">
+            </div>
+            <button type="submit" class="btn btn-secondary" style="width:auto;padding:10px 25px" id="passwordSendBtn">
+              <i class="fa-solid fa-paper-plane"></i> Enviar código de verificación
+            </button>
+          </form>
+
+          <div id="passwordVerifySection" class="form-group" style="display:none; margin-top:20px; border-top:1px solid var(--line); padding-top:20px;">
+            <label for="verifyCode">Código de verificación</label>
+            <input
+              type="text"
+              id="verifyCode"
+              placeholder="123456"
+              maxlength="6"
+              style="letter-spacing: 6px; font-size: 1.3rem; text-align: center; font-weight: 800;"
+            >
+            <span class="form-hint">Revisa tu correo electrónico e ingresa el código de 6 dígitos que te enviamos. El enlace y el código caducan a los 20 minutos.</span>
+            <button type="button" class="btn btn-primary" style="width:auto;padding:10px 25px; margin-top:12px" id="verifyPasswordBtn">
+              <i class="fa-solid fa-shield-halved"></i> Confirmar cambio de contraseña
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script src="js/api.js?v=2.0"></script>
+  <script src="js/auth.js?v=2.0"></script>
+  <script src="js/theme.js?v=2.0"></script>
+  <script src="js/sidebar.js?v=2.0"></script>
+  <script src="js/my-data.js?v=2.0"></script>
+  <script src="js/effects.js?v=2.0"></script>
+  <script src="js/footer.js?v=2.0"></script>
+</body>
+</html>

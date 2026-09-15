@@ -117,7 +117,7 @@ const sendOrderEmail = async (order, pdfUrl) => {
 // ── 2. Autenticación: Correo de Verificación de Cuenta ───────────
 const sendVerificationEmail = async (email, name, code) => {
   try {
-    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5500';
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
     // Apuntamos directamente a auth.html para evitar el redirect de /index.html → /
     // que hace npx serve y que descarta los query params.
     // &amp; es necesario en href HTML para que los clientes de correo no trunquen la URL.
@@ -256,8 +256,63 @@ const sendOrderAttendedEmail = async (order) => {
   }
 };
 
+// ── 4. Cambio de contraseña: Correo de verificación (código + link) ──
+const sendPasswordChangeEmail = async (email, name, code, expiresInMinutes = 20) => {
+  try {
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+    // El link apunta a la página "Mis Datos" con el código precargado
+    const changeLink = `${frontendUrl}/my-data.html?code=${code}`;
+
+    const htmlContent = `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; border: 1px solid #e2e8f0;">
+        <div style="background-color: #1a3c5e; padding: 24px; text-align: center;">
+          <h1 style="color: #ffffff; margin: 0; font-size: 24px;">🔧 GPanel Mantenimiento</h1>
+          <p style="color: #f97316; margin: 5px 0 0 0; font-size: 16px; font-weight: bold;">Cambio de Contraseña</p>
+        </div>
+
+        <div style="padding: 30px; color: #334155; line-height: 1.6;">
+          <h2 style="color: #1e293b; margin-top: 0;">¡Hola, ${name}!</h2>
+          <p>Has solicitado cambiar tu contraseña en GPanel. Para confirmar, ingresa el siguiente código de verificación:</p>
+
+          <div style="background-color: #f8fafc; border: 2px dashed #cbd5e1; border-radius: 8px; padding: 20px; text-align: center; margin: 24px 0;">
+            <span style="font-size: 32px; font-weight: 800; letter-spacing: 6px; color: #1a3c5e;">${code}</span>
+          </div>
+
+          <p style="text-align: center; margin: 30px 0;">
+            <a href="${changeLink}" style="background-color: #f97316; color: #ffffff; padding: 14px 28px; text-decoration: none; font-weight: bold; border-radius: 6px; display: inline-block;">Confirmar cambio de contraseña</a>
+          </p>
+
+          
+        </div>
+
+        <div style="background-color: #f1f5f9; padding: 16px; text-align: center; font-size: 12px; color: #64748b;">
+          Este enlace y el código son válidos por <strong>${expiresInMinutes} minutos</strong>. Si no solicitaste este cambio, puedes ignorar este mensaje. Tu contraseña actual seguirá vigente.
+        </div>
+      </div>
+    `;
+
+    const response = await resend.emails.send({
+      from: FROM_EMAIL,
+      to: [email],
+      subject: `Código de verificación: ${code} - Cambio de contraseña - GPanel`,
+      html: htmlContent
+    });
+
+    if (response.error) {
+      throw new Error(response.error.message || 'Error al enviar correo con Resend');
+    }
+
+    console.log(`✅ Correo de cambio de contraseña enviado a ${email} (Resend ID: ${response.data?.id})`);
+    return response;
+  } catch (error) {
+    console.error('❌ Error enviando correo de cambio de contraseña:', error.message);
+    throw error;
+  }
+};
+
 module.exports = {
   sendOrderEmail,
   sendVerificationEmail,
-  sendOrderAttendedEmail
+  sendOrderAttendedEmail,
+  sendPasswordChangeEmail
 };
