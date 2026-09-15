@@ -142,9 +142,7 @@ const sendVerificationEmail = async (email, name, code) => {
             <a href="${authLink}" style="background-color: #f97316; color: #ffffff; padding: 14px 28px; text-decoration: none; font-weight: bold; border-radius: 6px; display: inline-block;">Verificar mi cuenta ahora</a>
           </p>
 
-          <p style="font-size: 13px; color: #64748b;">
-            O si lo prefieres, ingresa directamente a <a href="${authLink}" style="color: #1a3c5e;">este enlace de autenticación</a> e ingresa manualmente el código.
-          </p>
+          
         </div>
 
         <div style="background-color: #f1f5f9; padding: 16px; text-align: center; font-size: 12px; color: #64748b;">
