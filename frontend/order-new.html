@@ -12,7 +12,8 @@
   <link rel="stylesheet" href="css/styles.css?v=2.0">
   <link rel="stylesheet" href="css/layout.css?v=2.0">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <link rel="icon" type="image/x-icon" href="https://res.cloudinary.com/ztbcsp9h/image/upload/gpanel-web/gpanel-icon.ico">
+  <link rel="icon" type="image/x-icon"
+    href="https://res.cloudinary.com/ztbcsp9h/image/upload/gpanel-web/gpanel-icon.ico">
 </head>
 
 <body>
@@ -71,7 +72,8 @@
             <label>Imagenes adjuntas <span style="font-weight:400;color:var(--ink-mute)">(opcional)</span></label>
             <div class="image-dropzone" id="imageDropzone">
               <i class="fa-solid fa-cloud-arrow-up dropzone-icon"></i>
-              <p class="dropzone-text">Arrastra imagenes aqui o <span class="dropzone-link">selecciona archivos</span></p>
+              <p class="dropzone-text">Arrastra imagenes aqui o <span class="dropzone-link">selecciona archivos</span>
+              </p>
               <p class="dropzone-hint">JPG, PNG, WEBP - Maximo 5MB por archivo</p>
               <input type="file" id="imageInput" accept="image/*" multiple style="display:none">
             </div>
@@ -82,6 +84,38 @@
             <i class="fa-solid fa-paper-plane"></i> Generar Orden
           </button>
         </form>
+      </div>
+    </div>
+  </div>
+
+  <button class="help-fab" type="button" id="helpFab" aria-label="Ayuda" title="¿Necesitas ayuda?">
+    <i class="fa-solid fa-headset"></i>
+  </button>
+
+  <div class="modal-overlay help-modal" id="helpModal" style="display:none;">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-circle-question"></i> ¿Necesitas ayuda?</h3>
+        <button class="modal-close" type="button" id="helpModalClose">&times;</button>
+      </div>
+
+      <div class="help-option" id="helpWhatsapp" style="cursor:pointer;">
+        <i class="fa-brands fa-whatsapp"></i>
+        <div>
+          <strong>Escríbenos por WhatsApp</strong>
+          <span>Soporte directo con nuestro equipo</span>
+        </div>
+      </div>
+      <div class="help-option" id="helpEmail" style="cursor:pointer;">
+        <i class="fa-solid fa-envelope"></i>
+        <div>
+          <strong>Escríbenos por correo</strong>
+          <span>Te respondemos lo antes posible</span>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn btn-cancel" type="button" id="helpModalCloseBtn">Cerrar</button>
       </div>
     </div>
   </div>

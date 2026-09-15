@@ -1,17 +1,21 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mis Datos - Gestion de Mantenimiento</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap">
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap">
   <link rel="stylesheet" href="css/styles.css?v=2.0">
   <link rel="stylesheet" href="css/layout.css?v=2.0">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <link rel="icon" type="image/x-icon" href="https://res.cloudinary.com/ztbcsp9h/image/upload/gpanel-web/gpanel-icon.ico">
+  <link rel="icon" type="image/x-icon"
+    href="https://res.cloudinary.com/ztbcsp9h/image/upload/gpanel-web/gpanel-icon.ico">
 </head>
+
 <body>
   <div class="bg-decoration" aria-hidden="true">
     <div class="blob blob-1"></div>
@@ -70,7 +74,8 @@
 
         <div class="detail-card" data-reveal style="border-radius:var(--radius); padding:28px;">
           <h3><i class="fa-solid fa-key"></i> Cambiar contraseña</h3>
-          <p class="form-hint">Verifica tu identidad con la contraseña actual y un código que enviaremos a tu correo.</p>
+          <p class="form-hint">Verifica tu identidad con la contraseña actual y un código que enviaremos a tu correo.
+          </p>
 
           <form id="passwordForm">
             <div class="form-group">
@@ -91,22 +96,52 @@
             </button>
           </form>
 
-          <div id="passwordVerifySection" class="form-group" style="display:none; margin-top:20px; border-top:1px solid var(--line); padding-top:20px;">
+          <div id="passwordVerifySection" class="form-group"
+            style="display:none; margin-top:20px; border-top:1px solid var(--line); padding-top:20px;">
             <label for="verifyCode">Código de verificación</label>
-            <input
-              type="text"
-              id="verifyCode"
-              placeholder="123456"
-              maxlength="6"
-              style="letter-spacing: 6px; font-size: 1.3rem; text-align: center; font-weight: 800;"
-            >
-            <span class="form-hint">Revisa tu correo electrónico e ingresa el código de 6 dígitos que te enviamos. El enlace y el código caducan a los 20 minutos.</span>
-            <button type="button" class="btn btn-primary" style="width:auto;padding:10px 25px; margin-top:12px" id="verifyPasswordBtn">
+            <input type="text" id="verifyCode" placeholder="123456" maxlength="6"
+              style="letter-spacing: 6px; font-size: 1.3rem; text-align: center; font-weight: 800;">
+            <span class="form-hint">Revisa tu correo electrónico e ingresa el código de 6 dígitos que te enviamos. El
+              enlace y el código caducan a los 20 minutos.</span>
+            <button type="button" class="btn btn-primary" style="width:auto;padding:10px 25px; margin-top:12px"
+              id="verifyPasswordBtn">
               <i class="fa-solid fa-shield-halved"></i> Confirmar cambio de contraseña
             </button>
           </div>
         </div>
 
+      </div>
+    </div>
+  </div>
+
+  <button class="help-fab" type="button" id="helpFab" aria-label="Ayuda" title="¿Necesitas ayuda?">
+    <i class="fa-solid fa-headset"></i>
+  </button>
+
+  <div class="modal-overlay help-modal" id="helpModal" style="display:none;">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-circle-question"></i> ¿Necesitas ayuda?</h3>
+        <button class="modal-close" type="button" id="helpModalClose">&times;</button>
+      </div>
+
+      <div class="help-option" id="helpWhatsapp" style="cursor:pointer;">
+        <i class="fa-brands fa-whatsapp"></i>
+        <div>
+          <strong>Escríbenos por WhatsApp</strong>
+          <span>Soporte directo con nuestro equipo</span>
+        </div>
+      </div>
+      <div class="help-option" id="helpEmail" style="cursor:pointer;">
+        <i class="fa-solid fa-envelope"></i>
+        <div>
+          <strong>Escríbenos por correo</strong>
+          <span>Te respondemos lo antes posible</span>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn btn-cancel" type="button" id="helpModalCloseBtn">Cerrar</button>
       </div>
     </div>
   </div>
@@ -119,4 +154,5 @@
   <script src="js/effects.js?v=2.0"></script>
   <script src="js/footer.js?v=2.0"></script>
 </body>
+
 </html>
