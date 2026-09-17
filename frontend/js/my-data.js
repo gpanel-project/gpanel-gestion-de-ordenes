@@ -62,7 +62,7 @@ document.getElementById('profileForm').addEventListener('submit', async (e) => {
       localStorage.setItem('user', JSON.stringify(savedUser));
     }
 
-    showAlert('✔️ <strong>Tus datos se actualizaron correctamente.</strong>', 'success', true);
+    showAlert('<strong>Tus datos se actualizaron correctamente.</strong>', 'success', true);
     loadProfile();
   } catch (error) {
     showAlert(error.message, 'error');
@@ -96,7 +96,7 @@ document.getElementById('passwordForm').addEventListener('submit', async (e) => 
     // Mostramos el paso 2 (ingresar el código)
     document.getElementById('passwordVerifySection').style.display = 'block';
     document.getElementById('verifyCode').focus();
-    showAlert('✉️ Código de verificación enviado a tu correo. Revisa tu bandeja de entrada (es válido por 20 minutos).', 'info', true);
+    showAlert('Código de verificación enviado a tu correo. Revisa tu bandeja de entrada (es válido por 20 minutos).', 'info', true);
 
     document.getElementById('currentPassword').value = '';
     document.getElementById('newPassword').value = '';

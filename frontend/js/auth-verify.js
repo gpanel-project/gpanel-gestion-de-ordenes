@@ -25,9 +25,9 @@ if (emailParam) verifyEmailInput.value = emailParam;
 if (codeParam) verifyCodeInput.value = codeParam;
 
 if (emailParam && codeParam) {
-  showAlert('✨ Código cargado automáticamente. Haz clic en "Verificar y Activar Cuenta".', 'info');
+  showAlert('Código cargado automáticamente. Haz clic en "Verificar y Activar Cuenta".', 'info');
 } else if (emailParam) {
-  showAlert(`📧 Ingresa el código de 6 dígitos enviado a ${emailParam}.`, 'info');
+  showAlert(`Ingresa el código de 6 dígitos enviado a ${emailParam}.`, 'info');
 }
 
 // ── Envío del formulario de verificación ──────────────────
