@@ -214,7 +214,7 @@ document.getElementById('assignForm').addEventListener('submit', async (e) => {
 
   try {
     await apiRequest(`/orders/${orderId}/assign`, 'PATCH', { technician_id: parseInt(techId) });
-    showAlert('✅ Técnico asignado exitosamente');
+    showAlert('Técnico asignado exitosamente');
     loadOrder();
   } catch (error) {
     alert('Error: ' + error.message);
@@ -297,7 +297,7 @@ document.getElementById('saveSignature').addEventListener('click', async () => {
       signature_base64: signatureData
     });
 
-    showAlert('✅ Firma guardada, PDF generado y correo enviado exitosamente');
+    showAlert('Firma guardada, PDF generado y correo enviado exitosamente');
     loadOrder();
 
   } catch (error) {

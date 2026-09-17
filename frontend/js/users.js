@@ -151,13 +151,13 @@ document.getElementById('userForm').addEventListener('submit', async (e) => {
   try {
     if (editingUserId) {
       await apiRequest(`/users/${editingUserId}`, 'PUT', { name, email, role, active });
-      showAlert(`✅ Técnico <strong>${name}</strong> actualizado correctamente`, 'success');
+      showAlert(`Técnico <strong>${name}</strong> actualizado correctamente`, 'success');
     } else {
       if (!password || password.length < 6) {
         throw new Error('La contraseña debe tener al menos 6 caracteres');
       }
       await apiRequest('/users', 'POST', { name, email, password, role });
-      showAlert(`✅ Técnico <strong>${name}</strong> creado exitosamente`, 'success');
+      showAlert(`Técnico <strong>${name}</strong> creado exitosamente`, 'success');
     }
     closeModal();
     // Recargamos la página para refrescar las métricas (stat-card) y la tabla
@@ -175,7 +175,7 @@ async function deleteUser(id, name) {
 
   try {
     await apiRequest(`/users/${id}`, 'DELETE');
-    showAlert(`🗑️ Usuario <strong>${name}</strong> eliminado`, 'success');
+    showAlert(`Usuario <strong>${name}</strong> eliminado`, 'success');
     // Recargamos la página para refrescar las métricas (stat-card) y la tabla
     setTimeout(() => window.location.reload(), 900);
   } catch (error) {

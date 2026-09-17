@@ -126,7 +126,7 @@ document.getElementById('verifyPasswordBtn').addEventListener('click', async () 
   try {
     await apiRequest('/auth/verify-password-change', 'POST', { code });
 
-    showAlert('✅ <strong>Tu contraseña se actualizó exitosamente.</strong>', 'success', true);
+    showAlert('<strong>Tu contraseña se actualizó exitosamente.</strong>', 'success', true);
     document.getElementById('passwordVerifySection').style.display = 'none';
     document.getElementById('verifyCode').value = '';
   } catch (error) {
@@ -143,7 +143,7 @@ const codeParam = urlParams.get('code') || '';
 if (codeParam) {
   document.getElementById('passwordVerifySection').style.display = 'block';
   document.getElementById('verifyCode').value = codeParam;
-  showAlert('✨ Código cargado desde el enlace. Haz clic en "<strong>Confirmar cambio de contraseña</strong>".', 'info', true);
+  showAlert('Código cargado desde el enlace. Haz clic en "<strong>Confirmar cambio de contraseña</strong>".', 'info', true);
 }
 
 loadProfile();
