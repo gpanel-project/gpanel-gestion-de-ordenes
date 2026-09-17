@@ -8,7 +8,7 @@ document.getElementById('appContainer').insertAdjacentHTML('afterbegin', renderS
 
 const welcomeEl = document.getElementById('welcomeMsg');
 if (welcomeEl && user) {
-  welcomeEl.textContent = `Hola, ${user.name}. Aquí puedes ver y gestionar tus órdenes de servicio`;
+  welcomeEl.textContent = `Hola, ${user.name}. Aquí puedes ver y gestionar tus órdenes de servicio.`;
 }
 
 let myOrders = [];
