@@ -1,5 +1,7 @@
 // ─── Configuración base ────────────────────────────────────
-const API_URL = 'http://localhost:3000/api';
+// La API y el frontend se sirven desde el mismo origen (Express),
+// por eso usamos una ruta relativa: funciona en local (:3000) y en Render.
+const API_URL = '/api';
 
 // ─── Función genérica para hacer peticiones ────────────────
 async function apiRequest(endpoint, method = 'GET', body = null, requireAuth = true) {

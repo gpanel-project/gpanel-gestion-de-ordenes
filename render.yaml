@@ -1,0 +1,53 @@
+# render.yaml — Blueprint de despliegue GPanel (Gestión de Órdenes de Mantenimiento)
+# Un solo Web Service: Express sirve la API y la carpeta frontend/ estáticamente.
+# Detalles: backend/package.json (engines node 20.x) y backend/src/app.js (PORT o 3000).
+
+services:
+  - type: web
+    name: gpanel-ordenes
+    runtime: node
+    plan: free
+    rootDir: backend
+    buildCommand: npm ci
+    startCommand: npm start
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: 20.18.0
+      - key: NODE_ENV
+        value: production
+      - key: FRONTEND_URL
+        value: https://gpanel-ordenes.onrender.com
+      - fromGroup: gpanel-ordenes
+
+envVarGroups:
+  - name: gpanel-ordenes
+    envVars:
+      # Base de datos (Supabase pooler)
+      - key: DB_HOST
+        sync: false
+      - key: DB_PORT
+        sync: false
+      - key: DB_USER
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: DB_NAME
+        sync: false
+      # Autenticación
+      - key: JWT_SECRET
+        sync: false
+      # Cloudinary (imágenes y PDFs)
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
+      # Resend (correo)
+      - key: RESEND_API_KEY
+        sync: false
+      - key: EMAIL_FROM
+        sync: false
+      - key: EMAIL_ADMIN
+        sync: false
