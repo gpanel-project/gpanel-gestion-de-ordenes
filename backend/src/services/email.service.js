@@ -1,8 +1,19 @@
 const { Resend } = require('resend');
-require('dotenv').config();
+require('dotenv').config({ quiet: true });
 
-const resend = new Resend(process.env.RESEND_API_KEY);
 const FROM_EMAIL = process.env.EMAIL_FROM || 'GPanel Mantenimiento <onboarding@resend.dev>';
+
+// Resend se instancia de forma perezosa: si RESEND_API_KEY aún no está
+// definida (p. ej. en Render antes de llenar las variables), el servidor
+// arranca igual y solo falla al intentar enviar un correo.
+let resend = null;
+const getResend = () => {
+  if (!process.env.RESEND_API_KEY) {
+    throw new Error('RESEND_API_KEY no está configurado. Revisa las variables de entorno.');
+  }
+  if (!resend) resend = new Resend(process.env.RESEND_API_KEY);
+  return resend;
+};
 
 // ── 1. Envío de Órdenes de Servicio Completadas ─────────────
 // pdfUrl: URL segura de Cloudinary (order.pdf_url), no ruta local
@@ -98,7 +109,7 @@ const sendOrderEmail = async (order, pdfUrl) => {
     if (order.technician_email) recipients.push(order.technician_email);
 
     // Enviar correo a través de Resend
-    const response = await resend.emails.send({
+    const response = await getResend().emails.send({
       from: FROM_EMAIL,
       to: recipients.length > 0 ? recipients : [process.env.EMAIL_ADMIN || 'delivered@resend.dev'],
       subject: `Orden de Servicio ${order.order_number} - Completada`,
@@ -151,7 +162,7 @@ const sendVerificationEmail = async (email, name, code) => {
       </div>
     `;
 
-    const response = await resend.emails.send({
+    const response = await getResend().emails.send({
       from: FROM_EMAIL,
       to: [email],
       subject: `Código de verificación: ${code} - GPanel`,
@@ -239,7 +250,7 @@ const sendOrderAttendedEmail = async (order) => {
       return null;
     }
 
-    const response = await resend.emails.send({
+    const response = await getResend().emails.send({
       from: FROM_EMAIL,
       to: recipients,
       subject: `Orden ${order.order_number} - Atendida, pendiente de firma`,
@@ -289,7 +300,7 @@ const sendPasswordChangeEmail = async (email, name, code, expiresInMinutes = 20)
       </div>
     `;
 
-    const response = await resend.emails.send({
+    const response = await getResend().emails.send({
       from: FROM_EMAIL,
       to: [email],
       subject: `Código de verificación: ${code} - Cambio de contraseña - GPanel`,

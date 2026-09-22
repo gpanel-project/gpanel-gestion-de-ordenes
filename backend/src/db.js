@@ -1,5 +1,5 @@
 const { Pool } = require('pg');
-require('dotenv').config();
+require('dotenv').config({ quiet: true });
 
 // Pool de conexiones a PostgreSQL (Supabase)
 const pool = new Pool({

@@ -1,7 +1,7 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const db = require('../db');
-require('dotenv').config();
+require('dotenv').config({ quiet: true });
 
 // Los códigos/enlaces de restablecimiento de contraseña expiran a los N minutos
 const PASSWORD_CHANGE_TTL_MINUTES = parseInt(process.env.PASSWORD_RESET_TTL_MINUTES || '20', 10);
