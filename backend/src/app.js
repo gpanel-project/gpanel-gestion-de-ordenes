@@ -13,8 +13,9 @@ app.use(cors());
 app.use(express.json());
 
 // ── Rutas ──────────────────────────────────────────────
+// La raíz muestra el login (frontend/index.html). /test-db sirve como health.
 app.get('/', (req, res) => {
-  res.json({ mensaje: '¡Servidor funcionando!', app: 'Gestión de Órdenes de Mantenimiento' });
+  res.sendFile(path.join(__dirname, '..', '..', 'frontend', 'index.html'));
 });
 
 app.get('/test-db', async (req, res) => {

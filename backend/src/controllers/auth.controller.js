@@ -81,7 +81,7 @@ const registerClient = async (req, res) => {
       [name, email, password_hash, company || null, phone || null, address || null, verificationCode]
     );
 
-    // 4. Enviar correo de verificación por Resend
+    // 4. Enviar correo de verificación por SMTP
     await sendVerificationEmail(email, name, verificationCode);
 
     res.status(200).json({

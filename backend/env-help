@@ -7,6 +7,10 @@ JWT_SECRET=
 
 
 
-RESEND_API_KEY=r
+# Correo SMTP (Gmail: activa 2FA y genera una App Password)
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=
+SMTP_PASS=
 EMAIL_FROM=
 EMAIL_ADMIN=

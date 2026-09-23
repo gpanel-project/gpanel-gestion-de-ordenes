@@ -1,18 +1,28 @@
-const { Resend } = require('resend');
+const nodemailer = require('nodemailer');
 require('dotenv').config({ quiet: true });
 
-const FROM_EMAIL = process.env.EMAIL_FROM || 'GPanel Mantenimiento <onboarding@resend.dev>';
+const FROM_EMAIL = process.env.EMAIL_FROM || 'GPanel Mantenimiento <proyectogestion26@gmail.com>';
 
-// Resend se instancia de forma perezosa: si RESEND_API_KEY aún no está
-// definida (p. ej. en Render antes de llenar las variables), el servidor
-// arranca igual y solo falla al intentar enviar un correo.
-let resend = null;
-const getResend = () => {
-  if (!process.env.RESEND_API_KEY) {
-    throw new Error('RESEND_API_KEY no está configurado. Revisa las variables de entorno.');
+// Transporter SMTP (Gmail) de forma perezosa: si las credenciales aún no
+// están definidas (p. ej. en Render antes de llenar las variables), el
+// servidor arranca igual y solo falla al intentar enviar un correo.
+let transporter = null;
+const getTransporter = () => {
+  if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
+    throw new Error('SMTP_USER/SMTP_PASS no configurados. Revisa las variables de entorno.');
   }
-  if (!resend) resend = new Resend(process.env.RESEND_API_KEY);
-  return resend;
+  if (!transporter) {
+    transporter = nodemailer.createTransport({
+      host: process.env.SMTP_HOST || 'smtp.gmail.com',
+      port: parseInt(process.env.SMTP_PORT || '587', 10),
+      secure: (process.env.SMTP_PORT || '587') === '465',
+      auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS,
+      },
+    });
+  }
+  return transporter;
 };
 
 // ── 1. Envío de Órdenes de Servicio Completadas ─────────────
@@ -99,7 +109,7 @@ const sendOrderEmail = async (order, pdfUrl) => {
     if (pdfUrl) {
       attachments.push({
         filename: `${order.order_number}.pdf`,
-        path: pdfUrl, // Resend soporta adjuntar directo desde una URL
+        path: pdfUrl, // Nodemailer soporta adjuntar directo desde una URL
       });
     }
 
@@ -108,19 +118,19 @@ const sendOrderEmail = async (order, pdfUrl) => {
     if (order.client_email) recipients.push(order.client_email);
     if (order.technician_email) recipients.push(order.technician_email);
 
-    // Enviar correo a través de Resend
-    const response = await getResend().emails.send({
+    // Enviar correo a través de SMTP (Gmail)
+    const response = await getTransporter().sendMail({
       from: FROM_EMAIL,
-      to: recipients.length > 0 ? recipients : [process.env.EMAIL_ADMIN || 'delivered@resend.dev'],
+      to: recipients.length > 0 ? recipients : [process.env.EMAIL_ADMIN || FROM_EMAIL],
       subject: `Orden de Servicio ${order.order_number} - Completada`,
       html: htmlContent,
       attachments: attachments
     });
 
-    console.log(`✅ Correo de Orden enviado vía Resend ID: ${response.data?.id || response.id}`);
+    console.log(`✅ Correo de Orden enviado vía SMTP a ${response.accepted?.join(', ') || recipients.join(', ') || FROM_EMAIL}`);
     return response;
   } catch (error) {
-    console.error('❌ Error enviando correo con Resend:', error.message);
+    console.error('❌ Error enviando correo con SMTP:', error.message);
     throw error;
   }
 };
@@ -162,18 +172,14 @@ const sendVerificationEmail = async (email, name, code) => {
       </div>
     `;
 
-    const response = await getResend().emails.send({
+    const response = await getTransporter().sendMail({
       from: FROM_EMAIL,
       to: [email],
       subject: `Código de verificación: ${code} - GPanel`,
       html: htmlContent
     });
 
-    if (response.error) {
-      throw new Error(response.error.message || 'Error al enviar correo con Resend');
-    }
-
-    console.log(`✅ Correo de verificación enviado a ${email} (Resend ID: ${response.data?.id})`);
+    console.log(`✅ Correo de verificación enviado a ${email} (ID: ${response.messageId})`);
     return response;
   } catch (error) {
     console.error('❌ Error enviando correo de verificación:', error.message);
@@ -250,14 +256,14 @@ const sendOrderAttendedEmail = async (order) => {
       return null;
     }
 
-    const response = await getResend().emails.send({
+    const response = await getTransporter().sendMail({
       from: FROM_EMAIL,
       to: recipients,
       subject: `Orden ${order.order_number} - Atendida, pendiente de firma`,
       html: htmlContent
     });
 
-    console.log(`✅ Correo de orden atendida enviado vía Resend ID: ${response.data?.id || response.id}`);
+    console.log(`✅ Correo de orden atendida enviado vía SMTP a ${recipients.join(', ')}`);
     return response;
   } catch (error) {
     console.error('❌ Error enviando correo de orden atendida:', error.message);
@@ -300,18 +306,14 @@ const sendPasswordChangeEmail = async (email, name, code, expiresInMinutes = 20)
       </div>
     `;
 
-    const response = await getResend().emails.send({
+    const response = await getTransporter().sendMail({
       from: FROM_EMAIL,
       to: [email],
       subject: `Código de verificación: ${code} - Cambio de contraseña - GPanel`,
       html: htmlContent
     });
 
-    if (response.error) {
-      throw new Error(response.error.message || 'Error al enviar correo con Resend');
-    }
-
-    console.log(`✅ Correo de cambio de contraseña enviado a ${email} (Resend ID: ${response.data?.id})`);
+    console.log(`✅ Correo de cambio de contraseña enviado a ${email} (ID: ${response.messageId})`);
     return response;
   } catch (error) {
     console.error('❌ Error enviando correo de cambio de contraseña:', error.message);
